@@ -1,6 +1,5 @@
 #include "logger.hpp"
 
-#include <logger.hpp>
 #include <ctime>
 #include <memory>
 
