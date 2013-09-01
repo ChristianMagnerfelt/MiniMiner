@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniMiner", "projects\MiniM
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoggerTest", "projects\LoggerTest\LoggerTest.vcxproj", "{48664509-ACE0-4768-8DD3-50C7BD74644E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderManagerTest", "projects\RenderManagerTest\RenderManagerTest.vcxproj", "{2ABE9840-55E9-42C4-9F9E-0985AFF46AE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{48664509-ACE0-4768-8DD3-50C7BD74644E}.Debug|Win32.Build.0 = Debug|Win32
 		{48664509-ACE0-4768-8DD3-50C7BD74644E}.Release|Win32.ActiveCfg = Release|Win32
 		{48664509-ACE0-4768-8DD3-50C7BD74644E}.Release|Win32.Build.0 = Release|Win32
+		{2ABE9840-55E9-42C4-9F9E-0985AFF46AE1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2ABE9840-55E9-42C4-9F9E-0985AFF46AE1}.Debug|Win32.Build.0 = Debug|Win32
+		{2ABE9840-55E9-42C4-9F9E-0985AFF46AE1}.Release|Win32.ActiveCfg = Release|Win32
+		{2ABE9840-55E9-42C4-9F9E-0985AFF46AE1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
