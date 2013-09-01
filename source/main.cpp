@@ -50,7 +50,7 @@ int main( int argc, char* argv[] )
 	MiniMiner::Vec2 bgPos;
 	bgPos.x = 0.0f;
 	bgPos.y = 0.0f;
-	MiniMiner::renderManager::copyToBuffer(renderManager, &bgId, &bgPos, 1);
+	MiniMiner::renderManager::setBackground(renderManager, bgId, bgPos);
 
 	// Enter main loop
 	SDL_Event event;

@@ -138,6 +138,15 @@ void renderBufferSetup(MiniMiner::RenderManager & manager)
 	}
 	MiniMiner::renderManager::copyToBuffer(manager, ids.data(), positions.data(), ids.size());
 }
+void backgroundSetup(MiniMiner::RenderManager & manager)
+{
+	// Load background and push to render manager buffer
+	GLuint bgID = MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/BackGround.jpg");
+	MiniMiner::Vec2 bgPos;
+	bgPos.x = 0.0f;
+	bgPos.y = 0.0f;
+	MiniMiner::renderManager::setBackground(manager, bgID, bgPos);
+}
 void testRenderBuffer(MiniMiner::RenderManager & manager)
 {
 	MiniMiner::renderManager::renderBuffer(manager);
@@ -156,6 +165,7 @@ int main( int argc, char* argv[])
 	MiniMiner::RenderManager manager;
 	MiniMiner::renderManager::init(manager, g_width, g_height);
 	renderBufferSetup(manager);
+	backgroundSetup(manager);
 
 	bool isRunning = true;
 	SDL_Event event;

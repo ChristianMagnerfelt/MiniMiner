@@ -80,8 +80,45 @@ namespace MiniMiner {
 			}
 			return true;
 		}
+		bool setBackground(RenderManager & manager, uint32_t bgID, Vec2 position)
+		{
+			manager.m_bgID = bgID;
+			manager.m_bgPos = position;
+			return true;
+		}
 		bool renderBuffer(RenderManager & manager)
 		{
+			uint32_t id;
+			uint32_t idOffset;
+			Vec2 pos;
+			float x = 0.0f;
+			float y = 0.0f;
+			float width = 0.0f;
+			float height = 0.0f;
+
+			// Render background first
+			id = manager.m_bgID;
+			pos = manager.m_bgPos;
+			x = pos.x;
+			y = pos.y;
+			{
+				auto it = std::find(manager.m_IDs.begin(), manager.m_IDs.end(), id);
+				idOffset = std::distance(manager.m_IDs.begin(), it);
+				width = manager.m_texDimensions[idOffset].x;
+				height = manager.m_texDimensions[idOffset].y;
+			}
+
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, id);
+
+			glBegin(GL_QUADS);
+				glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0.0f);
+				glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y, 0.0f);
+				glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, 0.0f);
+				glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + height, 0.0f);
+			glEnd();
+
+			// Render everything in data buffer
 			auto & buffer = manager.m_buffer;
 			if(buffer.size() == 0)
 				return false;
@@ -93,13 +130,7 @@ namespace MiniMiner {
 				else return true;
 			});
 
-			glEnable(GL_TEXTURE_2D);
 			uint32_t current = 0;
-			uint32_t id;
-			uint32_t idOffset;
-			Vec2 pos;
-			float width = 0;
-			float height = 0;
 			for(std::size_t i = 0; i < buffer.size(); ++i)
 			{
 				id = buffer[i].id;
@@ -115,8 +146,8 @@ namespace MiniMiner {
 				}
 
 				pos = buffer[i].position;
-				float x = pos.x;
-				float y = pos.y;
+				x = pos.x;
+				y = pos.y;
 
 				glBegin(GL_QUADS);
 					glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0.0f);

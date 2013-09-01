@@ -14,6 +14,7 @@ namespace MiniMiner
 		uint32_t imageFileToGLTexture(RenderManager & manager, const char * fileName);
 		bool releaseTextures(RenderManager & manager);
 		bool copyToBuffer(RenderManager & manager, uint32_t * IDs, Vec2 * positions, std::size_t count);
+		bool setBackground(RenderManager & manager, uint32_t bgID, Vec2 position);
 		bool renderBuffer(RenderManager & manager);
 	};
 };
