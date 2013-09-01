@@ -118,6 +118,9 @@ namespace MiniMiner {
 				glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + height, 0.0f);
 			glEnd();
 
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			// Render everything in data buffer
 			auto & buffer = manager.m_buffer;
 			if(buffer.size() == 0)
@@ -157,6 +160,7 @@ namespace MiniMiner {
 				glEnd();
 			}
 			glDisable(GL_TEXTURE_2D);
+			glDisable(GL_BLEND);
 			return true;
 		}
 	};
