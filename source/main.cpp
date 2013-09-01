@@ -11,6 +11,7 @@
 #include <gl/GLU.h>
 
 #include "logger.hpp"
+#include "render_manager.hpp"
 
 #include <cstdint>
 
@@ -22,7 +23,6 @@ bool initializeSDL(
 	SDL_GLContext & context);
 bool initializeOpenGL(int32_t width, int32_t height);
 void render(SDL_Window * window);
-GLuint imageFileToGLTex(const char * fileName);
 void drawGLTexture(GLuint textureID, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
 
 /// Main entry point
@@ -36,6 +36,8 @@ int main( int argc, char* argv[] )
 	int32_t screenWidth = 800;
 	int32_t screenHeight = 600;
 	bool isRunning = true;
+	MiniMiner::RenderManager renderManager;
+	
 	
 	if(!initializeSDL(windowTitle, screenWidth, screenHeight, window, context))
 		return 1;
@@ -46,7 +48,8 @@ int main( int argc, char* argv[] )
 	int32_t flags=IMG_INIT_JPG|IMG_INIT_PNG;
 	IMG_Init(flags);
 
-	GLuint bgId = imageFileToGLTex("assets/BackGround.jpg");
+	
+	GLuint bgId = MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/BackGround.jpg");
 
 	// Enter main loop
 	SDL_Event event;
@@ -120,33 +123,6 @@ bool initializeOpenGL(int32_t width, int32_t height)
 void render(SDL_Window * window)
 {
 	SDL_GL_SwapWindow(window);
-}
-GLuint imageFileToGLTex(const char * fileName)
-{
-	GLuint id = 0;
-	auto surface = IMG_Load(fileName);
-	
-	if(surface == nullptr)
-	{
-		LOGGER_ERROR("%s", IMG_GetError());
-		LOGGER_ERROR("Could not load image : %s", fileName);
-		return 0;
-	}
-
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-
-	GLint mode = GL_RGB;
-	if(surface->format->BytesPerPixel == 4)
-		mode = GL_RGBA;
-
-	glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
- 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	SDL_FreeSurface(surface);
-	return id;
 }
 void drawGLTexture(GLuint textureID, GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 {

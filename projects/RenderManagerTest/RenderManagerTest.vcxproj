@@ -39,14 +39,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$\test\$(ProjectName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\source;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)\test\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\source;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$\test\$(ProjectName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\source;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)\test\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\source;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,9 +56,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -67,19 +73,25 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\logger.hpp" />
     <ClInclude Include="..\..\source\math_types.hpp" />
     <ClInclude Include="..\..\source\render_manager.hpp" />
     <ClInclude Include="..\..\source\render_types.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\logger.cpp" />
     <ClCompile Include="..\..\source\render_manager.cpp" />
     <ClCompile Include="..\..\test\render_manager_test.cpp" />
   </ItemGroup>
