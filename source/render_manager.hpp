@@ -10,6 +10,7 @@ namespace MiniMiner
 {
 	namespace renderManager
 	{
+		bool init(RenderManager & manager, int32_t width, int32_t height);
 		uint32_t imageFileToGLTexture(RenderManager & manager, const char * fileName);
 		bool releaseTextures(RenderManager & manager);
 		bool copyToBuffer(RenderManager & manager, uint32_t * IDs, Vec2 * positions, std::size_t count);

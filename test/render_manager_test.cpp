@@ -56,23 +56,10 @@ bool initializeSDL(
 
 	return true;
 }
-bool initializeOpenGL(int32_t g_width, int32_t g_height)
-{
-	glClearColor ( 0.0, 0.0, 0.0, 1.0 );
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, g_width, g_height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, g_width, g_height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	return true;
-}
 void setup()
 {
 	Logger::LoggerManager::getInstance().init("debug.log");
 	initializeSDL("RenderManagerTest", g_width, g_height, g_window, g_context);
-	initializeOpenGL(g_width, g_height);
 }
 void tearDown()
 {
@@ -81,9 +68,15 @@ void tearDown()
     SDL_Quit();
 	Logger::LoggerManager::getInstance().finalize();
 }
+void testInit()
+{
+	MiniMiner::RenderManager manager;
+	assert(MiniMiner::renderManager::init(manager, g_width, g_height));
+}
 void testCopyToBuffer()
 {
 	MiniMiner::RenderManager manager;
+	MiniMiner::renderManager::init(manager, g_width, g_height);
 
 	uint32_t a;
 	MiniMiner::Vec2 b;
@@ -102,6 +95,8 @@ void testCopyToBuffer()
 void testImageFileToGLTextureAndRelease()
 {
 	MiniMiner::RenderManager manager;
+	MiniMiner::renderManager::init(manager, g_width, g_height);
+
 	auto invalid = MiniMiner::renderManager::imageFileToGLTexture(manager, "invalid");
 	auto bg = MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/BackGround.jpg");
 	auto blue = MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Blue.png");
@@ -118,23 +113,28 @@ void testImageFileToGLTextureAndRelease()
 }
 void renderBufferSetup(MiniMiner::RenderManager & manager)
 {
-	auto blue = MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Blue.png");
-	auto green = MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Green.png");
+	std::vector<uint32_t> colors;
+	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Blue.png"));
+	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Green.png"));
+	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Purple.png"));
+	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Red.png"));
+	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Yellow.png"));
 
-	std::vector<uint32_t> ids(100, blue);
-	for(std::size_t i = 0; i < 50; ++i)
+	std::vector<uint32_t> ids(100);
+	for(std::size_t i = 0; i < ids.size(); ++i)
 	{
-		ids[i] = green;
+		ids[i] = colors[rand() % colors.size()];
 	}
 	float x = 0.0f;
 	float y = 0.0f;
 	std::vector<MiniMiner::Vec2> positions(100);
 	for(std::size_t i = 0; i < positions.size(); ++i)
 	{
-		positions[i].x = static_cast<int>(x + 50.0f) % 500;
-		x = positions[i].x;
-		positions[i].y = static_cast<int>(y) * 50;
-		y += 0.1f;
+		positions[i].x = x;
+		x = static_cast<int>(x + 50.0f) % 500;
+		y = static_cast<int>((i) / 10);
+		positions[i].y = y * 50;
+		
 	}
 	MiniMiner::renderManager::copyToBuffer(manager, ids.data(), positions.data(), ids.size());
 }
@@ -149,10 +149,12 @@ void renderBufferTearDown(MiniMiner::RenderManager & manager)
 int main( int argc, char* argv[])
 {
 	setup();
+	testInit();
 	testImageFileToGLTextureAndRelease();
 	testCopyToBuffer();
 
 	MiniMiner::RenderManager manager;
+	MiniMiner::renderManager::init(manager, g_width, g_height);
 	renderBufferSetup(manager);
 
 	bool isRunning = true;

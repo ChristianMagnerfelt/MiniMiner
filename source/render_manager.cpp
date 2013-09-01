@@ -12,6 +12,18 @@
 namespace MiniMiner {
 
 	namespace renderManager {
+		bool init(RenderManager & manager, int32_t width, int32_t height)
+		{
+			glClearColor ( 0.0, 0.0, 0.0, 1.0 );
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0, width, height, 0, -1, 1);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			return true;
+		}
 		uint32_t imageFileToGLTexture(RenderManager & manager, const char * fileName)
 		{
 			GLuint id = 0;
@@ -106,12 +118,11 @@ namespace MiniMiner {
 				float x = pos.x;
 				float y = pos.y;
 
-
 				glBegin(GL_QUADS);
-					glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y, 0.0f);
-					glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y, 0.0f);
-					glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y + height, 0.0f);
-					glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, 0.0f);
+					glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0.0f);
+					glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y, 0.0f);
+					glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, 0.0f);
+					glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + height, 0.0f);
 				glEnd();
 			}
 			glDisable(GL_TEXTURE_2D);

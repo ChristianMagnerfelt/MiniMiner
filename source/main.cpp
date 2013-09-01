@@ -21,9 +21,7 @@ bool initializeSDL(
 	int32_t screenHeight, 
 	SDL_Window * & window,
 	SDL_GLContext & context);
-bool initializeOpenGL(int32_t width, int32_t height);
-void render(SDL_Window * window);
-void drawGLTexture(GLuint textureID, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
+void render(SDL_Window * window, MiniMiner::RenderManager renderManager);
 
 /// Main entry point
 int main( int argc, char* argv[] )
@@ -36,20 +34,23 @@ int main( int argc, char* argv[] )
 	int32_t screenWidth = 800;
 	int32_t screenHeight = 600;
 	bool isRunning = true;
-	MiniMiner::RenderManager renderManager;
-	
 	
 	if(!initializeSDL(windowTitle, screenWidth, screenHeight, window, context))
 		return 1;
 
-	if(!initializeOpenGL(screenWidth, screenHeight))
-		return 1;
+	// Initialize SDL Image library
+	IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG);
 
-	int32_t flags=IMG_INIT_JPG|IMG_INIT_PNG;
-	IMG_Init(flags);
-
+	MiniMiner::RenderManager renderManager;
+	if(!MiniMiner::renderManager::init(renderManager, screenWidth, screenHeight))
+		return -1;
 	
+	// Load background and push to render manager buffer
 	GLuint bgId = MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/BackGround.jpg");
+	MiniMiner::Vec2 bgPos;
+	bgPos.x = 0.0f;
+	bgPos.y = 0.0f;
+	MiniMiner::renderManager::copyToBuffer(renderManager, &bgId, &bgPos, 1);
 
 	// Enter main loop
 	SDL_Event event;
@@ -61,9 +62,10 @@ int main( int argc, char* argv[] )
 			case SDL_QUIT:
 				isRunning = false;
 		}
-		drawGLTexture(bgId, -1, -1, 2, 2);
-		render(window);
+		render(window, renderManager);
 	}
+	
+	MiniMiner::renderManager::releaseTextures(renderManager);
 
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow(window);
@@ -113,28 +115,8 @@ bool initializeSDL(
 
 	return true;
 }
-bool initializeOpenGL(int32_t width, int32_t height)
+void render(SDL_Window * window, MiniMiner::RenderManager renderManager)
 {
-	glClearColor ( 0.0, 0.0, 0.0, 1.0 );
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, width, height);
-	return true;
-}
-void render(SDL_Window * window)
-{
+	MiniMiner::renderManager::renderBuffer(renderManager);
 	SDL_GL_SwapWindow(window);
-}
-void drawGLTexture(GLuint textureID, GLfloat x, GLfloat y, GLfloat width, GLfloat height)
-{
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textureID);
- 
-	glBegin(GL_QUADS);
-		glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y, 0.0f);
-		glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y, 0.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y + height, 0.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, 0.0f);
-	glEnd();
-
-	glDisable(GL_TEXTURE_2D);
 }
