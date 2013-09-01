@@ -18,6 +18,8 @@ namespace MiniMiner
 	struct RenderManager
 	{
 		std::vector<uint32_t> m_IDs;
+		std::vector<uint32_t> m_IDTmp;
+		std::vector<Vec2> m_texDimensions;
 		std::vector<BufferData> m_buffer;
 	};
 }

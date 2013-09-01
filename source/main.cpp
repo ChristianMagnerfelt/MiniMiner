@@ -136,5 +136,5 @@ void drawGLTexture(GLuint textureID, GLfloat x, GLfloat y, GLfloat width, GLfloa
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, 0.0f);
 	glEnd();
 
-	glDisable(GL_TEXTURE);
+	glDisable(GL_TEXTURE_2D);
 }
