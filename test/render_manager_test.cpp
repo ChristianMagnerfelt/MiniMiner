@@ -132,7 +132,7 @@ void renderBufferSetup(MiniMiner::RenderManager & manager)
 	{
 		positions[i].x = x;
 		x = static_cast<int>(x + 50.0f) % 500;
-		y = static_cast<int>((i) / 10);
+		y = static_cast<int>((i) / 10.0f);
 		positions[i].y = y * 50;
 		
 	}

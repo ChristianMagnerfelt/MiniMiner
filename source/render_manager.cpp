@@ -51,8 +51,8 @@ namespace MiniMiner {
 			SDL_FreeSurface(surface);
 			manager.m_IDs.push_back(id);
 			Vec2 dim;
-			dim.x = surface->w;
-			dim.y = surface->h;
+			dim.x = static_cast<float>(surface->w);
+			dim.y = static_cast<float>(surface->h);
 			manager.m_texDimensions.push_back(dim);
 			return id;
 		}
@@ -127,7 +127,7 @@ namespace MiniMiner {
 				return false;
 
 			// Sort texture ids so we don't have to bind texture so often
-			std::sort(buffer.begin(), buffer.end(), [](BufferData & dataA, BufferData & dataB)
+			std::sort(buffer.begin(), buffer.end(), [](Drawable & dataA, Drawable & dataB)
 			{
 				if(dataA.id > dataB.id) return false;
 				else return true;

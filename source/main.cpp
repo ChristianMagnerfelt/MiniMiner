@@ -54,13 +54,37 @@ int main( int argc, char* argv[] )
 
 	// Enter main loop
 	SDL_Event event;
+	bool mouseLeft = false;
+	int32_t mouseX = 0;
+	int32_t mouseY = 0;
 	while(isRunning)
 	{
-		SDL_PollEvent(&event);
-		switch(event.type)
+		while(SDL_PollEvent(&event))
 		{
-			case SDL_QUIT:
-				isRunning = false;
+			switch(event.type)
+			{
+				case SDL_QUIT:
+					isRunning = false;
+					break;
+				case SDL_MOUSEBUTTONDOWN :	
+					mouseLeft = SDL_BUTTON_LEFT;
+					if(mouseLeft)
+					{
+						SDL_GetMouseState(&mouseX, &mouseY);
+						// TODO: Send mouse down event to input manager
+					}
+					break;
+				case SDL_MOUSEBUTTONUP :
+					mouseLeft = SDL_BUTTON_LEFT;
+					if(mouseLeft)
+					{
+						SDL_GetMouseState(&mouseX, &mouseY);
+						// TODO: Send mouse up event to input manager
+					}
+					break;
+				default :
+					break;
+			}
 		}
 		render(window, renderManager);
 	}

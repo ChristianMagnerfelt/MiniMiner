@@ -8,6 +8,12 @@ namespace MiniMiner
 		float x;
 		float y;
 	};
+
+	struct Rect
+	{
+		Vec2 dim;	// Width and height
+		Vec2 pos;	// Position x and y
+	};
 };
 
 #endif
