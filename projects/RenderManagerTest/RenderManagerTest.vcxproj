@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\logger.cpp" />
+    <ClCompile Include="..\..\source\math_types.cpp" />
     <ClCompile Include="..\..\source\render_manager.cpp" />
     <ClCompile Include="..\..\test\render_manager_test.cpp" />
   </ItemGroup>

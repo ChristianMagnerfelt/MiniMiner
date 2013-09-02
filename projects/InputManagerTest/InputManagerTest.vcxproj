@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\input_manager.cpp" />
+    <ClCompile Include="..\..\source\math_types.cpp" />
     <ClCompile Include="..\..\test\input_manager_test.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@ namespace MiniMiner
 
 	namespace inputManager
 	{
-		bool init(InputManager & inputManager, Rect gridContainer, Rect endButtonContainer);
+		bool init(InputManager & inputManager, const Rect & gridContainer, const Rect & endButtonContainer);
 		void sendKeyDownEvent(InputManager & inputManager, float x, float y);
 		void sendKeyUpEvent(InputManager & inputManager, float x, float y);
 		bool retrieveSelectedIndex(InputManager & inputManager, uint8_t & index);

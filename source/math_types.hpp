@@ -14,6 +14,9 @@ namespace MiniMiner
 		Vec2 dim;	// Width and height
 		Vec2 pos;	// Position x and y
 	};
+
+	bool operator==(const Vec2 & a, const Vec2 & b);
+	bool operator==(const Rect & a, const Rect & b);
 };
 
 #endif
