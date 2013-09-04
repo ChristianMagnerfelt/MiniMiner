@@ -197,6 +197,7 @@ int main( int argc, char* argv[])
 	MiniMiner::renderManager::init(manager, g_width, g_height);
 	renderBufferSetup(manager);
 	backgroundSetup(manager);
+	renderTextSetup(manager);
 
 	bool isRunning = true;
 	SDL_Event event;

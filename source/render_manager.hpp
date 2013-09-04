@@ -17,7 +17,8 @@ namespace MiniMiner
 		uint32_t m_bgID;						// Background id
 		Vec2 m_bgPos;							// Background position
 		uint32_t m_textAtlas;					// Atlas texture containing text characters
-		std::vector<char> textBuffer;			// Buffer that contains all strings to render
+		std::vector<char> m_textBuffer;			// Buffer that contains all strings to render
+		std::vector<uint32_t> m_textOffsets;		// Offsets to beginning och each string
 		std::vector<Drawable> m_textDrawables;	// Buffer of text drawables
 	};
 
@@ -29,7 +30,7 @@ namespace MiniMiner
 		bool copyToBuffer(RenderManager & manager, uint32_t * IDs, Vec2 * positions, std::size_t count);
 		bool setBackground(RenderManager & manager, uint32_t bgID, Vec2 position);
 		bool renderBuffer(RenderManager & manager);
-		bool copyTextsToBuffer(RenderManager & manager, char ** text, Vec2 * position, Vec2 * scale, std::size_t count);  
+		bool copyTextsToBuffer(RenderManager & manager, char ** text, Vec2 * position, Vec2 * scale, uint32_t count);  
 	};
 };
 

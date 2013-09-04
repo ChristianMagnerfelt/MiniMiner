@@ -13,6 +13,7 @@ namespace MiniMiner
 	{
 		uint32_t id;
 		Vec2 position;
+		Vec2 scale;
 	};
-}
+};
 #endif

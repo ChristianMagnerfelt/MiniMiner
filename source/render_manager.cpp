@@ -7,13 +7,23 @@
 #include "logger.hpp"
 
 #include <cstdint>
+#include <cstdio>
 #include <algorithm>
+
+#ifdef _WIN32
+#define snprintf _snprintf
+#endif
 
 namespace MiniMiner {
 
 	namespace renderManager {
 		bool init(RenderManager & manager, int32_t width, int32_t height)
 		{
+			// Allocate buffer storage
+			manager.m_textOffsets.resize(16);
+			manager.m_textDrawables.resize(16);
+			manager.m_textBuffer.resize(1024);
+
 			glClearColor ( 0.0, 0.0, 0.0, 1.0 );
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glViewport(0, 0, width, height);
@@ -161,6 +171,39 @@ namespace MiniMiner {
 			}
 			glDisable(GL_TEXTURE_2D);
 			glDisable(GL_BLEND);
+			return true;
+		}
+		bool copyTextsToBuffer(RenderManager & manager, char ** text, Vec2 * position, Vec2 * scale, uint32_t textCount)
+		{
+			// Copy text drawable data to text drawable buffer
+			manager.m_textDrawables.resize(textCount);
+			uint32_t atlasID = manager.m_textAtlas;
+			Drawable * drawables = manager.m_textDrawables.data();
+			Drawable drawable;
+			for(uint32_t i = 0; i < textCount; ++i)
+			{			
+				drawable.id = atlasID;
+				drawable.position = position[i];
+				drawable.scale = scale[i];
+				drawables[i] = drawable;
+			}
+
+			// Copy text to text buffer and store offsets for string
+			manager.m_textOffsets.resize(textCount);
+			uint32_t * textOffsets = manager.m_textOffsets.data();
+			uint32_t maxSize = manager.m_textBuffer.size();
+			uint32_t offset = 0;
+			uint32_t sizeUsed = 0;
+			
+			char * buffer = manager.m_textBuffer.data();
+
+			for(uint32_t i = 0; i < textCount; ++i)
+			{
+				sizeUsed = std::min(offset, maxSize);
+				textOffsets[i] = offset;
+				offset += snprintf(buffer + offset, maxSize - sizeUsed, "%s", text[i]);
+				buffer[offset++] = '\0';
+			}		
 			return true;
 		}
 	};
