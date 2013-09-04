@@ -13,9 +13,12 @@ namespace MiniMiner
 		std::vector<uint32_t> m_IDs;			// Textures IDs
 		std::vector<uint32_t> m_IDTmp;			// Texture ID temp vector
 		std::vector<Vec2> m_texDimensions;		// Texture dimensions
-		std::vector<Drawable> m_buffer;			// Render data buffer
+		std::vector<Drawable> m_buffer;			// Buffer of drawables
 		uint32_t m_bgID;						// Background id
 		Vec2 m_bgPos;							// Background position
+		uint32_t m_textAtlas;					// Atlas texture containing text characters
+		std::vector<char> textBuffer;			// Buffer that contains all strings to render
+		std::vector<Drawable> m_textDrawables;	// Buffer of text drawables
 	};
 
 	namespace renderManager
@@ -26,6 +29,7 @@ namespace MiniMiner
 		bool copyToBuffer(RenderManager & manager, uint32_t * IDs, Vec2 * positions, std::size_t count);
 		bool setBackground(RenderManager & manager, uint32_t bgID, Vec2 position);
 		bool renderBuffer(RenderManager & manager);
+		bool copyTextsToBuffer(RenderManager & manager, char ** text, Vec2 * position, Vec2 * scale, std::size_t count);  
 	};
 };
 

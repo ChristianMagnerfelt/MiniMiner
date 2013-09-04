@@ -151,10 +151,41 @@ void testRenderBuffer(MiniMiner::RenderManager & manager)
 {
 	MiniMiner::renderManager::renderBuffer(manager);
 }
+void renderTextSetup(MiniMiner::RenderManager & manager)
+{
+	std::vector<char *> textStrings;
+	textStrings.push_back("This is a long string");
+	textStrings.push_back("!!%!%!#!##!#¤#&¤#/#¤¤(&/%&(/&)=)?");
+	textStrings.push_back("1234567890");
+	textStrings.push_back("------------");
+	textStrings.push_back("");
+
+	MiniMiner::Vec2 scale;
+	scale.x = 1;
+	scale.y = 1;
+	std::vector<MiniMiner::Vec2> scales(5, scale); 
+	std::vector<MiniMiner::Vec2> positions;
+	MiniMiner::Vec2 pos;
+	pos.x = 100;
+	pos.y = 100;
+	positions.push_back(pos);
+	pos.y = 200;
+	positions.push_back(pos);
+	pos.y = 300;
+	positions.push_back(pos);
+	pos.y = 400;
+	positions.push_back(pos);
+	pos.y = 500;
+	positions.push_back(pos);
+
+	assert(MiniMiner::renderManager::copyTextsToBuffer(manager, textStrings.data(), positions.data(), scales.data(), textStrings.size()));
+	assert(manager.m_textDrawables.size() == 5);
+}
 void renderBufferTearDown(MiniMiner::RenderManager & manager)
 {
 	MiniMiner::renderManager::releaseTextures(manager);
 }
+
 int main( int argc, char* argv[])
 {
 	setup();
