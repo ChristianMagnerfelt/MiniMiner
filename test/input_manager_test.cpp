@@ -12,8 +12,8 @@ void setup()
 	MiniMiner::Vec2 gridDim;
 	gridPos.x = 300;
 	gridPos.y = 300;
-	gridDim.x = 100;
-	gridDim.y = 100;
+	gridDim.x = 256;
+	gridDim.y = 256;
 	g_gridRect.pos = gridPos;
 	g_gridRect.dim = gridDim;
 	MiniMiner::Vec2 endBtnPos;
@@ -48,18 +48,40 @@ void testSendKeyDownEvent()
 	std::cout << __FUNCTION__ << std::endl;
 	MiniMiner::InputManager inputManager;
 	MiniMiner::inputManager::init(inputManager, g_gridRect, g_endRndBtnRect);
+	MiniMiner::inputManager::sendKeyDownEvent(inputManager, 200, 200);		// Click outside grid
+	assert(inputManager.m_gridClicked == false);
+	MiniMiner::inputManager::sendKeyDownEvent(inputManager, 310, 310);		// Click inside grid
+	assert(inputManager.m_gridClicked == true);
 }
 void testSendKeyUpEvent()
 {
 	std::cout << __FUNCTION__ << std::endl;
 	MiniMiner::InputManager inputManager;
 	MiniMiner::inputManager::init(inputManager, g_gridRect, g_endRndBtnRect);
+	MiniMiner::inputManager::sendKeyUpEvent(inputManager, 200, 200); // Click outside grid
+	MiniMiner::inputManager::sendKeyUpEvent(inputManager, 310, 310); // Click inside grid
 }
 void testRetrieveSelectedIndex()
 {
 	std::cout << __FUNCTION__ << std::endl;
 	MiniMiner::InputManager inputManager;
 	MiniMiner::inputManager::init(inputManager, g_gridRect, g_endRndBtnRect);
+
+	// Click outside grid
+	uint8_t index;
+	MiniMiner::inputManager::sendKeyDownEvent(inputManager, 200, 200);		
+	assert(!MiniMiner::inputManager::retrieveSelectedIndex(inputManager, index));
+
+	// Click inside grid
+	for(auto i = 0; i < 8; ++i)
+	{
+		for(auto j = 0; j < 8; ++j)
+		{
+			MiniMiner::inputManager::sendKeyDownEvent(inputManager, 301 + j * 32, 301 + i * 32);
+			assert(MiniMiner::inputManager::retrieveSelectedIndex(inputManager, index));
+			assert(index == i * 8 + j);
+		}
+	}
 }
 void testEndButtonClicked()
 {

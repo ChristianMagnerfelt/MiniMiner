@@ -12,4 +12,5 @@ XCOPY /I /E /Y "%CD%\assets\*" "%CD%\test\RenderManagerTest\Release\assets"
 XCOPY /I /E /Y "%CD%\bin\*" "%CD%\test\RenderManagerTest\Release"
 ECHO Copy assets to projects
 XCOPY /I /E /Y "%CD%\assets\*" "%CD%\projects\RenderManagerTest\assets"
+XCOPY /I /E /Y "%CD%\assets\*" "%CD%\projects\MiniMiner\assets"
 ECHO Done
