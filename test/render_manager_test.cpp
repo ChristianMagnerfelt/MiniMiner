@@ -73,6 +73,12 @@ void testInit()
 	MiniMiner::RenderManager manager;
 	assert(MiniMiner::renderManager::init(manager, g_width, g_height));
 }
+void testFinalize()
+{
+	MiniMiner::RenderManager manager;
+	assert(MiniMiner::renderManager::init(manager, g_width, g_height));
+	assert(MiniMiner::renderManager::finalize(manager));
+}
 void testCopyToBuffer()
 {
 	MiniMiner::RenderManager manager;
@@ -91,6 +97,8 @@ void testCopyToBuffer()
 	std::size_t count = 100;
 	assert(MiniMiner::renderManager::copyToBuffer(manager, ids.data(), positions.data(), count));
 	assert(manager.m_buffer.size() == positions.size());
+
+	assert(MiniMiner::renderManager::finalize(manager));
 }
 void testImageFileToGLTextureAndRelease()
 {
@@ -110,8 +118,10 @@ void testImageFileToGLTextureAndRelease()
 	MiniMiner::renderManager::releaseTextures(manager);
 	assert(manager.m_IDs.size() == 0);
 	assert(manager.m_texDimensions.size() == 0);
+
+	assert(MiniMiner::renderManager::finalize(manager));
 }
-void renderBufferSetup(MiniMiner::RenderManager & manager)
+void testCopyToBuffer(MiniMiner::RenderManager & manager)
 {
 	std::vector<uint32_t> colors;
 	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Blue.png"));
@@ -138,7 +148,7 @@ void renderBufferSetup(MiniMiner::RenderManager & manager)
 	}
 	MiniMiner::renderManager::copyToBuffer(manager, ids.data(), positions.data(), ids.size());
 }
-void backgroundSetup(MiniMiner::RenderManager & manager)
+void testSetBackground(MiniMiner::RenderManager & manager)
 {
 	// Load background and push to render manager buffer
 	GLuint bgID = MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/BackGround.jpg");
@@ -146,16 +156,17 @@ void backgroundSetup(MiniMiner::RenderManager & manager)
 	bgPos.x = 0.0f;
 	bgPos.y = 0.0f;
 	MiniMiner::renderManager::setBackground(manager, bgID, bgPos);
+	assert(manager.m_bgID == bgID && manager.m_bgPos == bgPos);
 }
-void testRenderBuffer(MiniMiner::RenderManager & manager)
+void testRenderDrawables(MiniMiner::RenderManager & manager)
 {
-	MiniMiner::renderManager::renderBuffer(manager);
+	MiniMiner::renderManager::renderDrawables(manager);
 }
-void renderTextSetup(MiniMiner::RenderManager & manager)
+void testCopyTextsToBuffer(MiniMiner::RenderManager & manager)
 {
 	std::vector<char *> textStrings;
 	textStrings.push_back("This is a long string");
-	textStrings.push_back("!!%!%!#!##!#¤#&¤#/#¤¤(&/%&(/&)=)?");
+	textStrings.push_back("!!%!%!#");
 	textStrings.push_back("1234567890");
 	textStrings.push_back("------------");
 	textStrings.push_back("");
@@ -181,7 +192,7 @@ void renderTextSetup(MiniMiner::RenderManager & manager)
 	assert(MiniMiner::renderManager::copyTextsToBuffer(manager, textStrings.data(), positions.data(), scales.data(), textStrings.size()));
 	assert(manager.m_textDrawables.size() == 5);
 }
-void renderBufferTearDown(MiniMiner::RenderManager & manager)
+void testReleaseTextures(MiniMiner::RenderManager & manager)
 {
 	MiniMiner::renderManager::releaseTextures(manager);
 }
@@ -190,14 +201,15 @@ int main( int argc, char* argv[])
 {
 	setup();
 	testInit();
+	testFinalize();
 	testImageFileToGLTextureAndRelease();
 	testCopyToBuffer();
 
 	MiniMiner::RenderManager manager;
 	MiniMiner::renderManager::init(manager, g_width, g_height);
-	renderBufferSetup(manager);
-	backgroundSetup(manager);
-	renderTextSetup(manager);
+	testCopyToBuffer(manager);
+	testSetBackground(manager);
+	testCopyTextsToBuffer(manager);
 
 	bool isRunning = true;
 	SDL_Event event;
@@ -209,10 +221,11 @@ int main( int argc, char* argv[])
 			case SDL_QUIT : 
 				isRunning = false;
 		}
-		testRenderBuffer(manager);
+		testRenderDrawables(manager);
 		SDL_GL_SwapWindow(g_window);
 	}
-	renderBufferTearDown(manager);
+	testReleaseTextures(manager);
+	MiniMiner::renderManager::finalize(manager);
 	tearDown();
 	return 0;
 }

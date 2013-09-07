@@ -43,13 +43,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)\game\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_ttf;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\game\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_ttf;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -65,7 +65,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,7 +85,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

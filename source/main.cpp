@@ -141,6 +141,6 @@ bool initializeSDL(
 }
 void render(SDL_Window * window, MiniMiner::RenderManager renderManager)
 {
-	MiniMiner::renderManager::renderBuffer(renderManager);
+	MiniMiner::renderManager::renderDrawables(renderManager);
 	SDL_GL_SwapWindow(window);
 }
