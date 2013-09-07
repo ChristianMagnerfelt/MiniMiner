@@ -4,6 +4,7 @@
 #ifndef GAME_MANAGER_HPP
 #define GAME_MANAGER_HPP
 
+#include "game_timer.hpp"
 #include "math_types.hpp"
 #include "game_types.hpp"
 #include "input_manager.hpp"
@@ -33,11 +34,11 @@ namespace MiniMiner
 		bool createBoard(GameManager & manager);
 		bool checkConditions(GameManager & manager, InputManager & inputManager);
 		bool checkJewelSelection(GameManager & manager);
-		bool animateJewelSwitch(GameManager & manager);
+		bool animateJewelSwitch(GameManager & manager, GameTimer & gameTimer);
 		bool checkMatches(GameManager & manager);
 		bool generateJewels(GameManager & manager);
 		bool updateJewelPositions(GameManager & manager);
-		bool moveJewels(GameManager & manager);
+		bool moveJewels(GameManager & manager, GameTimer & gameTimer);
 	};
 };
 

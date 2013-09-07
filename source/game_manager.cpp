@@ -149,7 +149,7 @@ namespace MiniMiner
 
 			return true;
 		}
-		bool animateJewelSwitch(GameManager & manager)
+		bool animateJewelSwitch(GameManager & manager, GameTimer & gameTimer)
 		{
 
 			return true;
@@ -186,7 +186,7 @@ namespace MiniMiner
 
 			return true;
 		}
-		bool moveJewels(GameManager & manager)
+		bool moveJewels(GameManager & manager, GameTimer & gameTimer)
 		{
 
 			return true;
