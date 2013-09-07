@@ -102,6 +102,7 @@ namespace MiniMiner
 		{
 			manager.m_uniqueTypes = std::vector<uint8_t>(types, types + numTypes);
 			manager.m_positions.resize(8 * 8);
+			manager.m_startPositions.resize(8 * 8);
 			Vec2 gridOffset = gridContainer.pos;
 			Vec2 pos;
 			for(auto i = 0; i < 8; ++i)
@@ -111,6 +112,7 @@ namespace MiniMiner
 					pos.x = gridOffset.x + i * 32;
 					pos.y = gridOffset.y + j * 32;
 					manager.m_positions[i * 8 + j] = pos;
+					manager.m_startPositions[i * 8 + j] = pos;
 				}
 			}
 			pos.x = 0;
@@ -159,6 +161,24 @@ namespace MiniMiner
 			matches.resize(64, 0);
 			internal::checkVerticalMatches(manager, types.data(), matches.data());
 			internal::checkHorizontalMatches(manager, types.data(), matches.data());
+			return true;
+		}
+		bool updateJewelPositions(GameManager & manager)
+		{
+			auto & matches = manager.m_matches;
+			auto & positions = manager.m_positions;
+			uint32_t offset = 0;
+			uint32_t distance = 0;
+			for(uint32_t i = 0; i < 8; ++i)
+			{
+				for(int32_t j = 7; j >= 0; --j)
+				{
+					offset = i * 8 + j;
+					distance += matches[offset];
+					positions[offset].y -= 32 * distance;
+				}
+				distance = 0;
+			}
 			return true;
 		}
 		bool generateJewels(GameManager & manager)

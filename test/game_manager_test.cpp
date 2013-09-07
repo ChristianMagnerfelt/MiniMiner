@@ -31,6 +31,7 @@ void testInit()
 
 	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes));
 	assert(gameManager.m_positions.size() == 64);
+	assert(gameManager.m_startPositions.size() == 64);
 	assert(gameManager.m_targets.size() == 64);
 	assert(gameManager.m_speed.size() == 64);
 	assert(gameManager.m_types.size() == 64);
@@ -90,7 +91,6 @@ void testCheckMatches()
 	setup(gameManager, gridContainer, types, numTypes);
 
 	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes);
-	MiniMiner::gameManager::createBoard(gameManager);
 
 	for(int i = 0; i < gameManager.m_types.size(); ++i)
 	{
@@ -137,6 +137,39 @@ void testCheckMatches()
 	}
 	std::cout << std::endl;
 }
+void testUpdateJewelPositions()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	MiniMiner::GameManager gameManager;
+	MiniMiner::Rect gridContainer;
+	std::vector<uint8_t> types;	
+	uint32_t numTypes = 5;
+	setup(gameManager, gridContainer, types, numTypes);
+
+	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes);
+
+	for(int i = 0; i < gameManager.m_types.size(); ++i)
+	{
+		gameManager.m_types[i] = i + 2;
+	}
+	gameManager.m_types[3] = 0;
+	gameManager.m_types[4] = 0;
+	gameManager.m_types[5] = 0;
+	gameManager.m_types[8] = 1;
+	gameManager.m_types[16] = 1;
+	gameManager.m_types[24] = 1;
+	gameManager.m_types[32] = 1;
+
+	MiniMiner::gameManager::checkMatches(gameManager);
+	MiniMiner::gameManager::updateJewelPositions(gameManager);
+	assert(gameManager.m_positions[0].y == 300 - 32 * 3);
+	assert(gameManager.m_positions[1].y == 332 - 32 * 3);
+	assert(gameManager.m_positions[2].y == 364 - 32 * 3);
+	assert(gameManager.m_positions[8].y == 300 - 32);
+	assert(gameManager.m_positions[16].y == 300 - 32);
+	assert(gameManager.m_positions[24].y == 300 - 32);
+	assert(gameManager.m_positions[32].y == 300 - 32);
+}
 void testGenerateJewels()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -168,6 +201,7 @@ int main()
 	testCheckJewelSelection();
 	testAnimateJewelSwitch();
 	testCheckMatches();
+	testUpdateJewelPositions();
 	testGenerateJewels();
 	testMoveJewels();
 	testUpdate();

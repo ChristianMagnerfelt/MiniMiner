@@ -17,6 +17,7 @@ namespace MiniMiner
 	{
 		std::vector<uint8_t> m_uniqueTypes;			// The unique types of jewels
 		std::vector<uint8_t> m_types;				// The type of the jewel at each grid section
+		std::vector<Vec2> m_startPositions;			// The start position of each jewel
 		std::vector<Vec2> m_positions;				// The current position of each jewel
 		std::vector<Vec2> m_speed;					// The speed of each jewel used for animation
 		std::vector<uint8_t> m_matches;				// The 3+ matches
@@ -35,6 +36,7 @@ namespace MiniMiner
 		bool animateJewelSwitch(GameManager & manager);
 		bool checkMatches(GameManager & manager);
 		bool generateJewels(GameManager & manager);
+		bool updateJewelPositions(GameManager & manager);
 		bool moveJewels(GameManager & manager);
 	};
 };
