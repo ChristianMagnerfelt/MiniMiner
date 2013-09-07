@@ -56,10 +56,6 @@ void testInit()
 		assert(gameManager.m_speed[i] == pos);
 	}
 }
-void testUpdate()
-{
-	std::cout << __FUNCTION__ << std::endl;
-}
 void testCreateBoard()
 {
 	std::cout << __FUNCTION__ << std::endl;
@@ -84,9 +80,62 @@ void testAnimateJewelSwitch()
 {
 	std::cout << __FUNCTION__ << std::endl;
 }
-void testGetMatches()
+void testCheckMatches()
 {
 	std::cout << __FUNCTION__ << std::endl;
+	MiniMiner::GameManager gameManager;
+	MiniMiner::Rect gridContainer;
+	std::vector<uint8_t> types;	
+	uint32_t numTypes = 5;
+	setup(gameManager, gridContainer, types, numTypes);
+
+	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes);
+	MiniMiner::gameManager::createBoard(gameManager);
+
+	for(int i = 0; i < gameManager.m_types.size(); ++i)
+	{
+		gameManager.m_types[i] = i + 2;
+	}
+	gameManager.m_types[3] = 0;
+	gameManager.m_types[4] = 0;
+	gameManager.m_types[5] = 0;
+	gameManager.m_types[8] = 1;
+	gameManager.m_types[16] = 1;
+	gameManager.m_types[24] = 1;
+	gameManager.m_types[32] = 1;
+
+	// Show matrix of types
+	std::cout << "///////////////////////////" << std::endl;
+	for(auto i = 0; i < 8; ++i)
+	{
+		for(auto j = 0; j < 8; ++j)
+		{
+			std::cout << static_cast<int16_t>(gameManager.m_types[j * 8 + i]) << " ";
+		}
+		std::cout << std::endl;
+	}
+	MiniMiner::gameManager::checkMatches(gameManager);
+
+	auto & matches = gameManager.m_matches;
+	assert(matches[3] == 1);
+	assert(matches[4] == 1);
+	assert(matches[5] == 1);
+	assert(matches[8] == 1);
+	assert(matches[16] == 1);
+	assert(matches[24] == 1);
+	assert(matches[32] == 1);
+
+	// Show matrix of matches
+	std::cout << "///////////////////////////" << std::endl;	
+	for(auto i = 0; i < 8; ++i)
+	{
+		for(auto j = 0; j < 8; ++j)
+		{
+			std::cout << static_cast<int>(matches[j * 8 + i]) << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
 }
 void testGenerateJewels()
 {
@@ -96,17 +145,32 @@ void testMoveJewels()
 {
 	std::cout << __FUNCTION__ << std::endl;
 }
+void testUpdate()
+{
+	std::cout << __FUNCTION__ << std::endl;
+	uint8_t stage;
+
+	std::cout << __FUNCTION__ << std::endl;
+	MiniMiner::GameManager gameManager;
+	MiniMiner::Rect gridContainer;
+	std::vector<uint8_t> types;	
+	uint32_t numTypes = 6;
+	setup(gameManager, gridContainer, types, numTypes);
+
+	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes));
+	assert(MiniMiner::gameManager::createBoard(gameManager));
+}
 int main()
 {
 	testInit();
-	testUpdate();
 	testCreateBoard();
 	testCheckConditions();
 	testCheckJewelSelection();
 	testAnimateJewelSwitch();
-	testGetMatches();
+	testCheckMatches();
 	testGenerateJewels();
 	testMoveJewels();
+	testUpdate();
 	system("pause");
 	return 0;
 }

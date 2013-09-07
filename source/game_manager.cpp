@@ -7,6 +7,97 @@ namespace MiniMiner
 {
 	namespace gameManager
 	{
+		namespace internal 
+		{
+			void checkVerticalMatches(GameManager & manager, const uint8_t * types, uint8_t * matches)
+			{
+				uint8_t prev = -1;
+				uint8_t current = 0;
+				uint8_t count = 1;
+				uint8_t offset;
+
+				for(uint8_t i = 0; i < 8; ++i)
+				{	
+					for(uint8_t j = 0; j < 8; ++j)
+					{
+						offset = i * 8 + j;
+						current = types[offset];
+						// Type has changed, reset count and check if we have a match
+						if(current != prev)
+						{			
+							if(count >= 3)
+							{
+								for(uint8_t k = offset - count; k < offset; ++k)
+								{
+									matches[k] |= 1;
+								}
+							}
+							count = 1;
+						}
+						else
+						{
+							++count;
+						}
+						prev = current;
+					}
+					// If the the count is equal or greater than 3 when we exist row,
+					// it means that we have a match up until the end of the row
+					if(count >= 3)
+					{
+						for(uint8_t k = offset - count; k < offset; ++k)
+						{
+							matches[k] |= 1;
+						}
+					}
+					count = 1;
+					prev = - 1;
+				}
+			}
+			void checkHorizontalMatches(GameManager & manager, const uint8_t * types, uint8_t * matches)
+			{
+				uint8_t prev = -1;
+				uint8_t current = 0;
+				uint8_t count = 1;
+				uint8_t offset;
+
+				for(uint8_t i = 0; i < 8; ++i)
+				{	
+					for(uint8_t j = 0; j < 8; ++j)
+					{
+						offset = j * 8 + i;
+						current = types[offset];
+						// Type has changed, reset count and check if we have a match
+						if(current != prev)
+						{			
+							if(count >= 3)
+							{
+								for(uint8_t k = offset - count * 8; k < offset; k += 8)
+								{
+									matches[k] |= 1;
+								}
+							}
+							count = 1;
+						}
+						else
+						{
+							++count;
+						}
+						prev = current;
+					}
+					// If the the count is equal or greater than 3 when we exist row,
+					// it means that we have a match up until the end of the row
+					if(count >= 3)
+					{
+						for(uint8_t k = offset - count * 8; k < offset; k += 8)
+						{
+							matches[k] |= 1;
+						}
+					}
+					count = 1;
+					prev = - 1;
+				}
+			}
+		};
 		bool init(GameManager & manager, const Rect & gridContainer, const uint8_t * types, uint32_t numTypes)
 		{
 			manager.m_uniqueTypes = std::vector<uint8_t>(types, types + numTypes);
@@ -17,9 +108,9 @@ namespace MiniMiner
 			{
 				for(auto j = 0; j < 8; ++j)
 				{
-					pos.x = gridOffset.x + j * 32;
-					pos.y = gridOffset.y + i * 32;
-					manager.m_positions[j * 8 + i] = pos;
+					pos.x = gridOffset.x + i * 32;
+					pos.y = gridOffset.y + j * 32;
+					manager.m_positions[i * 8 + j] = pos;
 				}
 			}
 			pos.x = 0;
@@ -31,7 +122,7 @@ namespace MiniMiner
 		}
 		bool update(GameManager & gameManager, InputManager & inputManager)
 		{
-
+			
 			return true;
 		}
 		bool createBoard(GameManager & manager)
@@ -61,9 +152,13 @@ namespace MiniMiner
 
 			return true;
 		}
-		bool getMatches(GameManager & manager)
+		bool checkMatches(GameManager & manager)
 		{
-
+			auto & matches = manager.m_matches;
+			auto & types = manager.m_types;
+			matches.resize(64, 0);
+			internal::checkVerticalMatches(manager, types.data(), matches.data());
+			internal::checkHorizontalMatches(manager, types.data(), matches.data());
 			return true;
 		}
 		bool generateJewels(GameManager & manager)
