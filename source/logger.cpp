@@ -1,3 +1,6 @@
+///
+///	Author:			Christian Magnerfelt
+///
 #include "logger.hpp"
 
 #include <ctime>

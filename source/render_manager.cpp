@@ -1,3 +1,6 @@
+///
+///	Author:			Christian Magnerfelt
+///
 #include "render_manager.hpp"
 
 #include <SDL_opengl.h>

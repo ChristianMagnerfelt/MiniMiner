@@ -1,3 +1,6 @@
+///
+///	Author:			Christian Magnerfelt
+///
 #ifndef RENDER_TYPES_HPP
 #define RENDER_TYPES_HPP
 

@@ -1,3 +1,6 @@
+///
+///	Author:			Christian Magnerfelt
+///
 #include "input_manager.hpp"
 
 namespace MiniMiner

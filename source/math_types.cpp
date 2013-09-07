@@ -1,3 +1,6 @@
+///
+///	Author:			Christian Magnerfelt
+///
 #include "math_types.hpp"
 
 #include <cstring>

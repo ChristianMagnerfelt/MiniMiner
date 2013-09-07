@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C30F06CB-1A71-434A-8C1E-33EE82B5A092}</ProjectGuid>
-    <RootNamespace>MiniMiner</RootNamespace>
+    <ProjectGuid>{7E30CC6D-DC5D-4BE9-8FD4-A01A8A333C70}</ProjectGuid>
+    <RootNamespace>GameManagerTest</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -20,7 +20,6 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
-    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -28,7 +27,6 @@
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,16 +39,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\game\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\test\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_ttf;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\source;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\game\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)\test\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_ttf;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\source;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -58,14 +54,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableSpecificWarnings>4530;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -76,34 +67,24 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableSpecificWarnings>4530;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\game_manager.cpp" />
     <ClCompile Include="..\..\source\input_manager.cpp" />
-    <ClCompile Include="..\..\source\logger.cpp" />
-    <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\math_types.cpp" />
-    <ClCompile Include="..\..\source\render_manager.cpp" />
+    <ClCompile Include="..\..\test\game_manager_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\game_manager.hpp" />
     <ClInclude Include="..\..\source\game_types.hpp" />
     <ClInclude Include="..\..\source\input_manager.hpp" />
-    <ClInclude Include="..\..\source\logger.hpp" />
     <ClInclude Include="..\..\source\math_types.hpp" />
-    <ClInclude Include="..\..\source\render_manager.hpp" />
-    <ClInclude Include="..\..\source\render_types.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
