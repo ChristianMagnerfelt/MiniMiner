@@ -25,6 +25,8 @@ namespace MiniMiner
 		std::vector<uint8_t> m_matchCount;			// The number of matched sections per row
 		std::vector<Vec2> m_targets;				// The target destination of each jewel used for animation
 		std::vector<uint8_t> m_selectedIdx;			// A vector containg the selected indexes
+		float animationSpeed;						// The animation speed for every jewel
+		float dropSpeed;							// The speed of jewels that drop from above
 		Rect m_gridContainer;						// Container of the grid	
 		uint8_t m_stage;							// The current stage of the game
 		float m_roundStart;

@@ -171,6 +171,8 @@ namespace MiniMiner
 			manager.m_matchCount.resize(8, 0);
 			manager.m_stage = 0;
 			manager.m_gridContainer = gridContainer;
+			manager.animationSpeed = 70.0f;
+			manager.dropSpeed = 90.0f;
 			return true;
 		}
 		bool update(GameManager & gameManager, InputManager & inputManager, GameTimer & gameTimer)
@@ -182,32 +184,44 @@ namespace MiniMiner
 				gameManager::createBoard(gameManager);
 				return true;
 			}
+			// Switch depending on game stage
 			auto stage = gameManager.m_stage;
 			switch (stage)
 			{
 				case 0:
 					if(!gameManager::checkJewelSelection(gameManager, inputManager))
 					{
+						// We do not have a selection yet
 						return true;
 					}
-				case 1: 
-					if(!gameManager::animateJewelSwitch(gameManager, gameTimer))
+					gameManager::animateJewelSwitch(gameManager, gameTimer);
+				case 1:
+					// Move the jewels which are switching place
+					gameManager.m_stage = 1;
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.animationSpeed);
+					gameManager::moveJewel(gameManager, gameTimer);
+
+					// When both jewels have stopped we continue to the next stage
+					if(internal::hasSpeed(gameManager))
 					{
+						// Jewels are still moving
 						return true;
-					} 
+					}
 				case 2:
+					// We have some 3 matches, remove the old and generate some new at the top
 					internal::calculateMatchCount(gameManager);
 					gameManager::generateJewels(gameManager);
 					gameManager::updateJewelPositions(gameManager);
-					gameManager::setJewelSpeed(gameManager, gameTimer, 40.0f);
-					
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.dropSpeed);
 				case 3:
 					gameManager.m_stage = 3;
+					// Move the jewels until they stop
 					gameManager::moveJewel(gameManager, gameTimer);
-					gameManager::setJewelSpeed(gameManager, gameTimer, 40.0f);
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.dropSpeed);
 					if(internal::hasSpeed(gameManager))
 						return true;
 				case 5:
+					// Jewels have finished moving, check if we got new matches and return to stage 2 if so 
 					internal::resetMatches(gameManager);
 					gameManager::checkMatches(gameManager);
 					if(internal::hasMatches(gameManager))
@@ -215,10 +229,12 @@ namespace MiniMiner
 						gameManager.m_stage = 2;
 						return true;
 					}
+					// We are finsihed, set up for the next switch
 					gameManager.m_stage = 0;
 			}
 			return true;
 		}
+		/// Creates a random board from a unique set of jewels
 		bool createBoard(GameManager & manager)
 		{
 			auto & types = manager.m_types;
@@ -231,6 +247,7 @@ namespace MiniMiner
 			}
 			return true;
 		}
+		/// Checks if condition are meet to end the round
 		bool checkConditions(GameManager & manager, InputManager & inputManager)
 		{
 			if(inputManager::endButtonClicked(inputManager))
@@ -240,6 +257,7 @@ namespace MiniMiner
 			}
 			return true;
 		}
+		/// Checks if we got 2 jewel selections and if it's possible to make a swap
 		bool checkJewelSelection(GameManager & manager, InputManager & inputManager)
 		{
 			uint8_t index;
@@ -258,6 +276,7 @@ namespace MiniMiner
 
 				if(first == second)
 				{
+					// We can't switch with ourself
 					manager.m_selectedIdx.clear();
 					manager.m_stage = 0;
 					return false;
@@ -278,17 +297,25 @@ namespace MiniMiner
 				{
 					std::swap(types[first], types[second]);
 				}
+				else
+				{
+					// Other jewel is to far away
+					manager.m_selectedIdx.clear();
+					manager.m_stage = 0;
+					return false;
+				}
 
-				// Make switch and check match
+				// Check if we have a successful match
 				internal::resetMatches(manager);
 				gameManager::checkMatches(manager);
 				if(internal::hasMatches(manager))
 				{
-					manager.m_selectedIdx.clear();
+					// We have a match, continue to the next stage
 					return true;
 				}
 				else
 				{
+					// We do not have a successful switch, switch back
 					manager.m_selectedIdx.clear();
 					std::swap(types[first], types[second]);
 					manager.m_stage = 0;
@@ -297,11 +324,16 @@ namespace MiniMiner
 			}
 			return false;
 		}
+		/// Animates the switch between two jewels
 		bool animateJewelSwitch(GameManager & manager, GameTimer & gameTimer)
 		{
-
+			auto & positions = manager.m_positions;
+			auto & selectedIdx = manager.m_selectedIdx;
+			std::swap(positions[selectedIdx[0]], positions[selectedIdx[1]]);
+			manager.m_selectedIdx.clear();
 			return true;
 		}
+		/// Checks if we have a horizontal and/or a vertical 3+ match and store them in a matrix
 		bool checkMatches(GameManager & manager)
 		{
 			auto & matches = manager.m_matches;
@@ -311,6 +343,7 @@ namespace MiniMiner
 			internal::checkHorizontalMatches(manager, types.data(), matches.data());
 			return true;
 		}
+		/// Updates the jewel positons so that matched jewels are moved to the top
 		bool updateJewelPositions(GameManager & manager)
 		{
 			auto & matchCount = manager.m_matchCount;
@@ -325,6 +358,7 @@ namespace MiniMiner
 			{
 				count = matchCount[i];
 
+				// Move unmatched jewels to the bottom but keep their position
 				int32_t limit = i * 8 + count;
 				int32_t k = i * 8 + 7;
 				int32_t l = k;
@@ -344,6 +378,8 @@ namespace MiniMiner
 						--k;
 					}
 				}
+
+				// Move all matched jewels to the top for this row
 				for(int32_t j = 0; j < count; ++j)
 				{
 					offset = i * 8 + j;
@@ -353,6 +389,7 @@ namespace MiniMiner
 			}
 			return true;
 		}
+		/// Generate new jewels for all previously matched jewels
 		bool generateJewels(GameManager & manager)
 		{
 			auto & matchCount = manager.m_matchCount;
@@ -361,17 +398,19 @@ namespace MiniMiner
 			uint32_t numUnique = manager.m_uniqueTypes.size();
 			uint32_t offset = 0;
 			uint32_t count = 0;
+
 			for(uint32_t i = 0; i < 8; ++i)
 			{
-				count = matchCount[i];			
+				count = matchCount[i];	// Number of jewels that need to be generated for this row	
 				for(uint32_t j = 0; j < count; ++j)
 				{
 					offset = i * 8 + j;
-					types[offset] = uniqueTypes[rand() % numUnique];
+					types[offset] = uniqueTypes[rand() % numUnique];	// Select a random jewel
 				}
 			}
 			return true;
 		}
+		/// Sets the speed of the jewels so that they can be moved, it also stops jewels that have reached their targets
 		void setJewelSpeed(GameManager & manager, GameTimer & gameTimer, float speed)
 		{
 			auto & positions = manager.m_positions;
@@ -383,8 +422,11 @@ namespace MiniMiner
 			float deltaDistance = 0.0f;
 			for(uint32_t i = 0; i < size; ++i)
 			{
+				// How far do we have left in the x direction?
 				deltaDistance = startPositions[i].x - positions[i].x;
-				if(deltaDistance < deltaSpeed)
+
+				// If we reach the target in the next step, we can set the position to the target position
+				if(std::abs(deltaDistance) < deltaSpeed)
 				{
 					jewelSpeed[i].x = 0;
 					positions[i].x = startPositions[i].x;
@@ -395,8 +437,11 @@ namespace MiniMiner
 					jewelSpeed[i].x = copysign(speed, deltaDistance);
 				}
 
+				// How far do we have left in the y direction?
 				deltaDistance = startPositions[i].y - positions[i].y;
-				if(deltaDistance < deltaSpeed)
+
+				// If we reach the target in the next step, we can set the position to the target position
+				if(std::abs(deltaDistance) < deltaSpeed)
 				{
 					jewelSpeed[i].y = 0;
 					positions[i].y = startPositions[i].y;
@@ -408,6 +453,7 @@ namespace MiniMiner
 				}
 			}
 		}
+		/// Moves all jewels that have a speed
 		bool moveJewel(GameManager & manager, GameTimer & gameTimer)
 		{
 			auto & positions = manager.m_positions;
