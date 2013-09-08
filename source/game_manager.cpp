@@ -101,7 +101,7 @@ namespace MiniMiner
 					// it means that we have a match up until the end of the row
 					if(count >= 3)
 					{
-						for(uint8_t k = offset - count * 8; k < offset; k += 8)
+						for(uint8_t k = offset - (count - 1) * 8; k <= offset; k += 8)
 						{
 							matches[k] |= 1;
 						}
@@ -210,6 +210,12 @@ namespace MiniMiner
 				auto first = selectedIndex[0];
 				auto second = selectedIndex[1];
 
+				if(first == second)
+				{
+					manager.m_selectedIdx.clear();
+					manager.m_stage = 0;
+					return false;
+				}
 				if(first + 1 == second)
 				{
 					std::swap(types[first], types[second]);
@@ -262,23 +268,51 @@ namespace MiniMiner
 		{
 			auto & matches = manager.m_matches;
 			auto & positions = manager.m_positions;
+			auto & types = manager.m_types;
 			uint32_t height = manager.m_gridContainer.dim.y / 8;
 			uint32_t offset = 0;
 			uint32_t distance = 0;
+			uint32_t count = 0;
 			for(uint32_t i = 0; i < 8; ++i)
 			{
 				for(int32_t j = 7; j >= 0; --j)
 				{
 					offset = i * 8 + j;
-					distance += matches[offset];
-					positions[offset].y -= height * distance;
+					count += matches[offset];
 				}
-				distance = 0;
+
+				int32_t limit = i * 8 + count;
+				int32_t k = i * 8 + 7;
+				int32_t l = k;
+				while(l >= limit)
+				{
+					if(matches[k])
+					{
+						k--;
+					}
+					else
+					{
+						positions[l].y = positions[k].y;
+						types[l] = types[k];
+						if(l == limit)
+							break;
+						--l;
+						--k;
+					}
+				}
+				for(int32_t j = 0; j < count; ++j)
+				{
+					offset = i * 8 + j;
+					positions[offset].y -= height * count;
+				}
+				count = 0;
 			}
 			return true;
 		}
 		bool generateJewels(GameManager & manager)
 		{
+			auto & matches = manager.m_matches;
+			auto & types = manager.m_types;
 
 			return true;
 		}

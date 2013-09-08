@@ -104,7 +104,10 @@ void testCheckMatches()
 	gameManager.m_types[8] = 1;
 	gameManager.m_types[16] = 1;
 	gameManager.m_types[24] = 1;
-	gameManager.m_types[32] = 1;
+	gameManager.m_types[32] = 0;
+	gameManager.m_types[40] = 1;
+	gameManager.m_types[48] = 1;
+	gameManager.m_types[56] = 1;
 
 	// Show matrix of types
 	std::cout << "///////////////////////////" << std::endl;
@@ -119,13 +122,6 @@ void testCheckMatches()
 	MiniMiner::gameManager::checkMatches(gameManager);
 
 	auto & matches = gameManager.m_matches;
-	assert(matches[3] == 1);
-	assert(matches[4] == 1);
-	assert(matches[5] == 1);
-	assert(matches[8] == 1);
-	assert(matches[16] == 1);
-	assert(matches[24] == 1);
-	assert(matches[32] == 1);
 
 	// Show matrix of matches
 	std::cout << "///////////////////////////" << std::endl;	
@@ -138,6 +134,17 @@ void testCheckMatches()
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+
+	assert(matches[3] == 1);
+	assert(matches[4] == 1);
+	assert(matches[5] == 1);
+	assert(matches[8] == 1);
+	assert(matches[16] == 1);
+	assert(matches[24] == 1);
+	assert(matches[32] == 0);
+	assert(matches[40] == 1);
+	assert(matches[48] == 1);
+	assert(matches[56] == 1);
 }
 void testUpdateJewelPositions()
 {
