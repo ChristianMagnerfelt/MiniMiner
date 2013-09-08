@@ -13,21 +13,6 @@ namespace MiniMiner
 	{
 		namespace internal 
 		{
-			void calculateMatchCount(GameManager & manager)
-			{
-				auto & matches = manager.m_matches;
-				auto & count = manager.m_matchCount;
-				uint32_t offset = 0;
-				for(uint32_t i = 0; i < 8; ++i)
-				{
-					count[i] = 0;
-					for(int32_t j = 7; j >= 0; --j)
-					{
-						offset = i * 8 + j;
-						count[i] += matches[offset];
-					}
-				}
-			}
 			void resetMatches(GameManager & manager)
 			{
 				auto & matches = manager.m_matches;
@@ -144,15 +129,36 @@ namespace MiniMiner
 				}
 			}
 		};
-		bool init(GameManager & manager, const Rect & gridContainer, const uint8_t * types, uint32_t numTypes)
+		bool init(
+			GameManager & manager, 
+			const Rect & gridContainer, 
+			const uint8_t * types, 
+			uint32_t numTypes, 
+			uint8_t fire1Id, 
+			uint8_t fire2Id, 
+			uint8_t boardId)
 		{
-			manager.m_uniqueTypes = std::vector<uint8_t>(types, types + numTypes);
-			manager.m_positions.resize(8 * 8);
-			manager.m_startPositions.resize(8 * 8);
-			Vec2 gridOffset = gridContainer.pos;
+			manager.m_gridContainer = gridContainer;
+			manager.m_gridSize = 64;
+			manager.m_positions.resize(manager.m_gridSize + 3);	// jewels + fire + board
+			manager.m_types.resize(manager.m_gridSize + 3, 0);
+			manager.m_matches.resize(manager.m_gridSize, 0);
+			manager.m_matchCount.resize(8, 0);
+
 			Vec2 pos;
-			float width = gridContainer.dim.x/8;
-			float height = gridContainer.dim.y/8;
+			pos.x = 0;
+			pos.y = 0;
+			manager.m_speed.resize(manager.m_gridSize, pos);
+
+			manager.m_startPositions.resize(manager.m_gridSize);
+
+			// Save the list of unique jewel types
+			manager.m_uniqueTypes = std::vector<uint8_t>(types, types + numTypes);
+
+			// Initialize start positions
+			Vec2 gridOffset = manager.m_gridContainer.pos;	
+			float width = manager.m_gridContainer.dim.x/8;
+			float height = manager.m_gridContainer.dim.y/8;
 			for(auto i = 0; i < 8; ++i)
 			{
 				for(auto j = 0; j < 8; ++j)
@@ -163,14 +169,8 @@ namespace MiniMiner
 					manager.m_startPositions[i * 8 + j] = pos;
 				}
 			}
-			pos.x = 0;
-			pos.y = 0;
-			manager.m_targets.resize(64, pos);
-			manager.m_speed.resize(64, pos);
-			manager.m_types.resize(64, 0);
-			manager.m_matchCount.resize(8, 0);
+
 			manager.m_stage = 0;
-			manager.m_gridContainer = gridContainer;
 			manager.animationSpeed = 70.0f;
 			manager.dropSpeed = 90.0f;
 			return true;
@@ -209,7 +209,7 @@ namespace MiniMiner
 					}
 				case 2:
 					// We have some 3 matches, remove the old and generate some new at the top
-					internal::calculateMatchCount(gameManager);
+					gameManager::calculateMatchCount(gameManager);
 					gameManager::generateJewels(gameManager);
 					gameManager::updateJewelPositions(gameManager);
 					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.dropSpeed);
@@ -239,7 +239,7 @@ namespace MiniMiner
 		{
 			auto & types = manager.m_types;
 			auto & uniques = manager.m_uniqueTypes;
-			uint32_t size = manager.m_types.size();
+			uint32_t size = manager.m_gridSize;
 			uint32_t numUnique = manager.m_uniqueTypes.size();
 			for(auto i = 0; i < size; ++i)
 			{
@@ -338,7 +338,6 @@ namespace MiniMiner
 		{
 			auto & matches = manager.m_matches;
 			auto & types = manager.m_types;
-			matches.resize(64, 0);
 			internal::checkVerticalMatches(manager, types.data(), matches.data());
 			internal::checkHorizontalMatches(manager, types.data(), matches.data());
 			return true;
@@ -362,11 +361,11 @@ namespace MiniMiner
 				int32_t limit = i * 8 + count;
 				int32_t k = i * 8 + 7;
 				int32_t l = k;
-				while(l >= limit)
+				while(l >= limit && k >= 0)
 				{
 					if(matches[k])
 					{
-						k--;
+						--k;
 					}
 					else
 					{
@@ -388,6 +387,21 @@ namespace MiniMiner
 				count = 0;
 			}
 			return true;
+		}
+		void calculateMatchCount(GameManager & manager)
+		{
+			auto & matches = manager.m_matches;
+			auto & count = manager.m_matchCount;
+			uint32_t offset = 0;
+			for(uint32_t i = 0; i < 8; ++i)
+			{
+				count[i] = 0;
+				for(int32_t j = 7; j >= 0; --j)
+				{
+					offset = i * 8 + j;
+					count[i] += matches[offset];
+				}
+			}
 		}
 		/// Generate new jewels for all previously matched jewels
 		bool generateJewels(GameManager & manager)
@@ -416,7 +430,7 @@ namespace MiniMiner
 			auto & positions = manager.m_positions;
 			auto & startPositions = manager.m_startPositions;
 			auto & jewelSpeed = manager.m_speed;
-			uint32_t size = positions.size();
+			uint32_t size = manager.m_gridSize;
 			float deltaTime = gameTimer.getSmoothDeltaTime();
 			float deltaSpeed = speed * deltaTime;
 			float deltaDistance = 0.0f;
@@ -458,7 +472,7 @@ namespace MiniMiner
 		{
 			auto & positions = manager.m_positions;
 			auto & speed = manager.m_speed;
-			uint32_t size = positions.size();
+			uint32_t size = manager.m_gridSize;
 			float deltaTime = gameTimer.getSmoothDeltaTime();
 			for(uint32_t i = 0; i < size; ++i)
 			{

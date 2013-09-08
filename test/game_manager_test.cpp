@@ -29,12 +29,11 @@ void testInit()
 	uint32_t numTypes = 6;
 	setup(gameManager, gridContainer, types, numTypes);
 
-	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes));
-	assert(gameManager.m_positions.size() == 64);
+	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes, 1, 1, 1));
+	assert(gameManager.m_positions.size() == 67);
+	assert(gameManager.m_types.size() == 67);
 	assert(gameManager.m_startPositions.size() == 64);
-	assert(gameManager.m_targets.size() == 64);
 	assert(gameManager.m_speed.size() == 64);
-	assert(gameManager.m_types.size() == 64);
 	assert(gameManager.m_matchCount.size() == 8);
 
 	float width = gridContainer.dim.x/8;
@@ -56,7 +55,6 @@ void testInit()
 	pos.y = 0;
 	for(auto i = 0; i < 64; ++i)
 	{
-		assert(gameManager.m_targets[i] == pos);
 		assert(gameManager.m_speed[i] == pos);
 	}
 }
@@ -69,7 +67,7 @@ void testCreateBoard()
 	uint32_t numTypes = 6;
 	setup(gameManager, gridContainer, types, numTypes);
 
-	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes));
+	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes, 1, 1, 1));
 	assert(MiniMiner::gameManager::createBoard(gameManager));
 }
 void testCheckConditions()
@@ -93,7 +91,7 @@ void testCheckMatches()
 	uint32_t numTypes = 5;
 	setup(gameManager, gridContainer, types, numTypes);
 
-	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes);
+	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes, 1, 1, 1);
 
 	for(int i = 0; i < gameManager.m_types.size(); ++i)
 	{
@@ -156,7 +154,7 @@ void testUpdateJewelPositions()
 	uint32_t numTypes = 5;
 	setup(gameManager, gridContainer, types, numTypes);
 
-	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes);
+	MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes, 1, 1, 1);
 
 	for(int i = 0; i < gameManager.m_types.size(); ++i)
 	{
@@ -171,6 +169,7 @@ void testUpdateJewelPositions()
 	gameManager.m_types[32] = 1;
 
 	MiniMiner::gameManager::checkMatches(gameManager);
+	MiniMiner::gameManager::calculateMatchCount(gameManager);
 	MiniMiner::gameManager::updateJewelPositions(gameManager);
 	assert(gameManager.m_positions[0].y == 300 - 32 * 3);
 	assert(gameManager.m_positions[1].y == 332 - 32 * 3);
@@ -200,7 +199,7 @@ void testUpdate()
 	uint32_t numTypes = 6;
 	setup(gameManager, gridContainer, types, numTypes);
 
-	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes));
+	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes, 1, 1, 1));
 	assert(MiniMiner::gameManager::createBoard(gameManager));
 }
 int main()

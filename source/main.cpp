@@ -86,8 +86,11 @@ int main( int argc, char* argv[] )
 		types.push_back(MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/Red.png"));
 		types.push_back(MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/Yellow.png"));
 		types.push_back(MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/Purple.png"));
+		auto fire1ID = MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/Fire1.png");
+		auto fire2ID = MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/Fire2.png");
+		auto ScoreBoardID = MiniMiner::renderManager::imageFileToGLTexture(renderManager, "assets/ScoreBoard.png");
 
-		if(!MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), types.size()))
+		if(!MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), types.size(), fire1ID, fire2ID, ScoreBoardID))
 			return -1;
 
 		MiniMiner::gameManager::createBoard(gameManager);
