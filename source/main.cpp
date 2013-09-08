@@ -43,7 +43,7 @@ int main( int argc, char* argv[] )
 	const char * windowTitle = "MiniMiner";
 	SDL_Window * window;
 	SDL_GLContext context;
-	int32_t screenWidth = 800;
+	int32_t screenWidth = 755;
 	int32_t screenHeight = 600;
 	bool isRunning = true;
 	

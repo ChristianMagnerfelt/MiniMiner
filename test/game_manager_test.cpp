@@ -35,6 +35,7 @@ void testInit()
 	assert(gameManager.m_targets.size() == 64);
 	assert(gameManager.m_speed.size() == 64);
 	assert(gameManager.m_types.size() == 64);
+	assert(gameManager.m_matchCount.size() == 8);
 
 	float width = gridContainer.dim.x/8;
 	float height = gridContainer.dim.y/8;

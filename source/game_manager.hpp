@@ -22,6 +22,7 @@ namespace MiniMiner
 		std::vector<Vec2> m_positions;				// The current position of each jewel
 		std::vector<Vec2> m_speed;					// The speed of each jewel used for animation
 		std::vector<uint8_t> m_matches;				// The 3+ matches
+		std::vector<uint8_t> m_matchCount;			// The number of matched sections per row
 		std::vector<Vec2> m_targets;				// The target destination of each jewel used for animation
 		std::vector<uint8_t> m_selectedIdx;			// A vector containg the selected indexes
 		Rect m_gridContainer;						// Container of the grid	

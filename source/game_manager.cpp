@@ -13,6 +13,39 @@ namespace MiniMiner
 	{
 		namespace internal 
 		{
+			void calculateMatchCount(GameManager & manager)
+			{
+				auto & matches = manager.m_matches;
+				auto & count = manager.m_matchCount;
+				uint32_t offset = 0;
+				for(uint32_t i = 0; i < 8; ++i)
+				{
+					count[i] = 0;
+					for(int32_t j = 7; j >= 0; --j)
+					{
+						offset = i * 8 + j;
+						count[i] += matches[offset];
+					}
+				}
+			}
+			void resetMatches(GameManager & manager)
+			{
+				auto & matches = manager.m_matches;
+				for(int32_t i = 0; i < matches.size(); ++i)
+				{
+					matches[i] = 0;
+				}
+			}
+			bool hasSpeed(GameManager & manager)
+			{
+				auto & speed = manager.m_speed;
+				for(int32_t i = 0; i < speed.size(); ++i)
+				{
+					if(speed[i].x > 0) return true;
+					if(speed[i].y > 0) return true;
+				}
+				return false;
+			}
 			bool hasMatches(GameManager & manager)
 			{
 				auto & matches = manager.m_matches;
@@ -135,6 +168,7 @@ namespace MiniMiner
 			manager.m_targets.resize(64, pos);
 			manager.m_speed.resize(64, pos);
 			manager.m_types.resize(64, 0);
+			manager.m_matchCount.resize(8, 0);
 			manager.m_stage = 0;
 			manager.m_gridContainer = gridContainer;
 			return true;
@@ -162,14 +196,26 @@ namespace MiniMiner
 						return true;
 					} 
 				case 2:
+					internal::calculateMatchCount(gameManager);
 					gameManager::generateJewels(gameManager);
 					gameManager::updateJewelPositions(gameManager);
-					gameManager::setJewelSpeed(gameManager, gameTimer, 1.0f);
-					gameManager.m_stage = 0;
+					gameManager::setJewelSpeed(gameManager, gameTimer, 40.0f);
+					
 				case 3:
+					gameManager.m_stage = 3;
 					gameManager::moveJewel(gameManager, gameTimer);
+					gameManager::setJewelSpeed(gameManager, gameTimer, 40.0f);
+					if(internal::hasSpeed(gameManager))
+						return true;
 				case 5:
+					internal::resetMatches(gameManager);
 					gameManager::checkMatches(gameManager);
+					if(internal::hasMatches(gameManager))
+					{
+						gameManager.m_stage = 2;
+						return true;
+					}
+					gameManager.m_stage = 0;
 			}
 			return true;
 		}
@@ -234,6 +280,7 @@ namespace MiniMiner
 				}
 
 				// Make switch and check match
+				internal::resetMatches(manager);
 				gameManager::checkMatches(manager);
 				if(internal::hasMatches(manager))
 				{
@@ -266,6 +313,7 @@ namespace MiniMiner
 		}
 		bool updateJewelPositions(GameManager & manager)
 		{
+			auto & matchCount = manager.m_matchCount;
 			auto & matches = manager.m_matches;
 			auto & positions = manager.m_positions;
 			auto & types = manager.m_types;
@@ -275,11 +323,7 @@ namespace MiniMiner
 			uint32_t count = 0;
 			for(uint32_t i = 0; i < 8; ++i)
 			{
-				for(int32_t j = 7; j >= 0; --j)
-				{
-					offset = i * 8 + j;
-					count += matches[offset];
-				}
+				count = matchCount[i];
 
 				int32_t limit = i * 8 + count;
 				int32_t k = i * 8 + 7;
@@ -311,9 +355,21 @@ namespace MiniMiner
 		}
 		bool generateJewels(GameManager & manager)
 		{
-			auto & matches = manager.m_matches;
+			auto & matchCount = manager.m_matchCount;
 			auto & types = manager.m_types;
-
+			auto & uniqueTypes = manager.m_uniqueTypes;
+			uint32_t numUnique = manager.m_uniqueTypes.size();
+			uint32_t offset = 0;
+			uint32_t count = 0;
+			for(uint32_t i = 0; i < 8; ++i)
+			{
+				count = matchCount[i];			
+				for(uint32_t j = 0; j < count; ++j)
+				{
+					offset = i * 8 + j;
+					types[offset] = uniqueTypes[rand() % numUnique];
+				}
+			}
 			return true;
 		}
 		void setJewelSpeed(GameManager & manager, GameTimer & gameTimer, float speed)
