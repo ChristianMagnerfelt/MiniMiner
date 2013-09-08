@@ -255,7 +255,7 @@ namespace MiniMiner {
 			manager.m_texDimensions.clear();
 			return true;
 		}
-		bool copyToBuffer(RenderManager & manager, uint32_t * IDs, Vec2 * positions, std::size_t count)
+		bool copyToBuffer(RenderManager & manager, uint8_t * IDs, Vec2 * positions, std::size_t count)
 		{
 			if(IDs == nullptr || positions == nullptr || count == 0)
 				return false;

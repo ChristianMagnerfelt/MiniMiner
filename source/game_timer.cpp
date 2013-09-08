@@ -96,8 +96,9 @@ GameTimer::seconds_t GameTimer::calculateSmoothDeltaTime()
 void GameTimer::waitUntilEndOfFrame()
 {
 	auto dt = calculateDeltaTime();
-	while(dt < m_targetDeltaTime)
+	while(dt + 0.001 < m_targetDeltaTime)
 	{
 		m_stallFunc(dt);
+		dt = calculateDeltaTime();
 	}
 }
