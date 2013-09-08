@@ -36,13 +36,15 @@ void testInit()
 	assert(gameManager.m_speed.size() == 64);
 	assert(gameManager.m_types.size() == 64);
 
+	float width = gridContainer.dim.x/8;
+	float height = gridContainer.dim.y/8;
 	MiniMiner::Vec2 pos;
 	for(auto i = 0; i < 8; ++i)
 	{
 		for(auto j = 0; j < 8; ++j)
 		{
-			pos.x = 300 + j * 32;
-			pos.y = 300 + i * 32;
+			pos.x = 300 + j * width;
+			pos.y = 300 + i * height;
 			assert(gameManager.m_positions[j * 8 + i] == pos);
 			std::cout << "(" << pos.x << "," << pos.y << ")";
 		}

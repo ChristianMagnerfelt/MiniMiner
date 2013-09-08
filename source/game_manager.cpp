@@ -13,6 +13,15 @@ namespace MiniMiner
 	{
 		namespace internal 
 		{
+			bool hasMatches(GameManager & manager)
+			{
+				auto & matches = manager.m_matches;
+				for(int32_t i = 0; i < matches.size(); ++i)
+				{
+					if(matches[i] == 1) return true;
+				}
+				return false;
+			}
 			void checkVerticalMatches(GameManager & manager, const uint8_t * types, uint8_t * matches)
 			{
 				uint8_t prev = -1;
@@ -109,12 +118,14 @@ namespace MiniMiner
 			manager.m_startPositions.resize(8 * 8);
 			Vec2 gridOffset = gridContainer.pos;
 			Vec2 pos;
+			float width = gridContainer.dim.x/8;
+			float height = gridContainer.dim.y/8;
 			for(auto i = 0; i < 8; ++i)
 			{
 				for(auto j = 0; j < 8; ++j)
 				{
-					pos.x = gridOffset.x + i * 32;
-					pos.y = gridOffset.y + j * 32;
+					pos.x = gridOffset.x + i * width;
+					pos.y = gridOffset.y + j * height;
 					manager.m_positions[i * 8 + j] = pos;
 					manager.m_startPositions[i * 8 + j] = pos;
 				}
@@ -124,11 +135,42 @@ namespace MiniMiner
 			manager.m_targets.resize(64, pos);
 			manager.m_speed.resize(64, pos);
 			manager.m_types.resize(64, 0);
+			manager.m_stage = 0;
+			manager.m_gridContainer = gridContainer;
 			return true;
 		}
-		bool update(GameManager & gameManager, InputManager & inputManager)
+		bool update(GameManager & gameManager, InputManager & inputManager, GameTimer & gameTimer)
 		{
-			
+			// Check timer and if end button is pressed
+			if(!gameManager::checkConditions(gameManager, inputManager))
+			{
+				// End round
+				gameManager::createBoard(gameManager);
+				return true;
+			}
+			auto stage = gameManager.m_stage;
+			switch (stage)
+			{
+				case 0:
+					if(!gameManager::checkJewelSelection(gameManager, inputManager))
+					{
+						return true;
+					}
+				case 1: 
+					if(!gameManager::animateJewelSwitch(gameManager, gameTimer))
+					{
+						return true;
+					} 
+				case 2:
+					gameManager::generateJewels(gameManager);
+					gameManager::updateJewelPositions(gameManager);
+					gameManager::setJewelSpeed(gameManager, gameTimer, 1.0f);
+					gameManager.m_stage = 0;
+				case 3:
+					gameManager::moveJewel(gameManager, gameTimer);
+				case 5:
+					gameManager::checkMatches(gameManager);
+			}
 			return true;
 		}
 		bool createBoard(GameManager & manager)
@@ -145,13 +187,62 @@ namespace MiniMiner
 		}
 		bool checkConditions(GameManager & manager, InputManager & inputManager)
 		{
-
+			if(inputManager::endButtonClicked(inputManager))
+			{
+				manager.m_stage = 0;
+				return false;
+			}
 			return true;
 		}
-		bool checkJewelSelection(GameManager & manager)
+		bool checkJewelSelection(GameManager & manager, InputManager & inputManager)
 		{
+			uint8_t index;
+			auto & selectedIndex = manager.m_selectedIdx;
+			auto & types = manager.m_types;
+			if(inputManager::retrieveSelectedIndex(inputManager, index))
+			{
+				selectedIndex.push_back(index);
+			}
+			// Do we have 2 selections?
+			if(selectedIndex.size() == 2)
+			{
 
-			return true;
+				auto first = selectedIndex[0];
+				auto second = selectedIndex[1];
+
+				if(first + 1 == second)
+				{
+					std::swap(types[first], types[second]);
+				}
+				else if(first - 1 == second)
+				{
+					std::swap(types[first], types[second]);
+				}
+				else if(first + 8 == second)
+				{
+					std::swap(types[first], types[second]);
+				}
+				else if(first - 8 == second)
+				{
+					std::swap(types[first], types[second]);
+				}
+
+				// Make switch and check match
+				gameManager::checkMatches(manager);
+				if(internal::hasMatches(manager))
+				{
+					manager.m_selectedIdx.clear();
+					return true;
+				}
+				else
+				{
+					manager.m_selectedIdx.clear();
+					std::swap(types[first], types[second]);
+					manager.m_stage = 0;
+					return false;
+				}
+			}
+			return false;
 		}
 		bool animateJewelSwitch(GameManager & manager, GameTimer & gameTimer)
 		{
@@ -171,6 +262,7 @@ namespace MiniMiner
 		{
 			auto & matches = manager.m_matches;
 			auto & positions = manager.m_positions;
+			uint32_t height = manager.m_gridContainer.dim.y / 8;
 			uint32_t offset = 0;
 			uint32_t distance = 0;
 			for(uint32_t i = 0; i < 8; ++i)
@@ -179,7 +271,7 @@ namespace MiniMiner
 				{
 					offset = i * 8 + j;
 					distance += matches[offset];
-					positions[offset].y -= 32 * distance;
+					positions[offset].y -= height * distance;
 				}
 				distance = 0;
 			}

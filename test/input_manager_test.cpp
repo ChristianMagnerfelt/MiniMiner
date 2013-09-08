@@ -79,7 +79,7 @@ void testRetrieveSelectedIndex()
 		{
 			MiniMiner::inputManager::sendKeyDownEvent(inputManager, 301 + j * 32, 301 + i * 32);
 			assert(MiniMiner::inputManager::retrieveSelectedIndex(inputManager, index));
-			assert(index == i * 8 + j);
+			assert(index == j * 8 + i);
 		}
 	}
 }

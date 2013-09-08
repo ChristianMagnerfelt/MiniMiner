@@ -70,13 +70,14 @@ int main( int argc, char* argv[] )
 		bgPos.y = 0.0f;
 		MiniMiner::renderManager::setBackground(renderManager, bgId, bgPos);
 
+		MiniMiner::Rect endButtonContainer;
 		MiniMiner::Rect gridContainer;
 		MiniMiner::Vec2 gridPos;
 		MiniMiner::Vec2 gridDim;
 		gridPos.x = 320;
 		gridPos.y = 100;
-		gridDim.x = 512;
-		gridDim.y = 512;
+		gridDim.x = 360;
+		gridDim.y = 360;
 		gridContainer.pos = gridPos;
 		gridContainer.dim = gridDim;
 		std::vector<uint8_t> types;
@@ -90,6 +91,7 @@ int main( int argc, char* argv[] )
 			return -1;
 
 		MiniMiner::gameManager::createBoard(gameManager);
+		MiniMiner::inputManager::init(inputManager, gridContainer, endButtonContainer);
 	}
 
 
@@ -114,7 +116,7 @@ int main( int argc, char* argv[] )
 					if(mouseLeft)
 					{
 						SDL_GetMouseState(&mouseX, &mouseY);
-						// TODO: Send mouse down event to input manager
+						MiniMiner::inputManager::sendKeyDownEvent(inputManager, mouseX, mouseY);
 					}
 					break;
 				case SDL_MOUSEBUTTONUP :
@@ -122,13 +124,14 @@ int main( int argc, char* argv[] )
 					if(mouseLeft)
 					{
 						SDL_GetMouseState(&mouseX, &mouseY);
-						// TODO: Send mouse up event to input manager
+						MiniMiner::inputManager::sendKeyUpEvent(inputManager, mouseX, mouseY);
 					}
 					break;
 				default :
 					break;
 			}
 		}
+		MiniMiner::gameManager::update(gameManager, inputManager, gameTimer);
 		MiniMiner::gameToRenderer::jewelsToDrawables(gameManager, renderManager);
 		render(window, renderManager);
 	}

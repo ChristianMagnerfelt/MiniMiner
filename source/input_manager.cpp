@@ -23,7 +23,9 @@ namespace MiniMiner
 					inputManager.m_indexGrid[j][i] = idx;
 				}
 			}
+			inputManager.m_gridClicked = false;
 			inputManager.m_endRoundButtonClicked = false;
+			inputManager.m_endRoundButtonReleased = false;
 			inputManager.m_selectedIndex = 0;
 			return true;
 		}
@@ -45,7 +47,7 @@ namespace MiniMiner
 						if(x > gridX && x <= (gridX + gridWidth) && y > gridY && y <= (gridY + gridHeight))
 						{
 							inputManager.m_gridClicked = true;
-							inputManager.m_selectedIndex = i * 8 + j;
+							inputManager.m_selectedIndex = j * 8 + i;
 							return;
 						}
 						gridX += gridWidth;
@@ -72,6 +74,14 @@ namespace MiniMiner
 				return true;
 			}
 			return false;
+		}
+		bool endButtonClicked(InputManager & inputManager)
+		{
+			return inputManager.m_endRoundButtonClicked;
+		}
+		bool endButtonReleased(InputManager & inputManager)
+		{
+			return inputManager.m_endRoundButtonClicked;
 		}
 	};
 };

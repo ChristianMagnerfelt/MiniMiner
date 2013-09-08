@@ -84,14 +84,14 @@ void testCopyToBuffer()
 	MiniMiner::RenderManager manager;
 	MiniMiner::renderManager::init(manager, g_width, g_height);
 
-	uint32_t a;
+	uint8_t a;
 	MiniMiner::Vec2 b;
 	assert(!MiniMiner::renderManager::copyToBuffer(manager, nullptr, nullptr, 0));
 	assert(!MiniMiner::renderManager::copyToBuffer(manager, &a, nullptr, 0));
 	assert(!MiniMiner::renderManager::copyToBuffer(manager, nullptr, &b, 0));
 	assert(!MiniMiner::renderManager::copyToBuffer(manager, nullptr, nullptr, 100));
 
-	std::vector<uint32_t> ids(100, 1);
+	std::vector<uint8_t> ids(100, 1);
 	MiniMiner::Vec2 pos = {10, 10};
 	std::vector<MiniMiner::Vec2> positions(100, pos);
 	std::size_t count = 100;
@@ -130,7 +130,7 @@ void testCopyToBuffer(MiniMiner::RenderManager & manager)
 	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Red.png"));
 	colors.push_back(MiniMiner::renderManager::imageFileToGLTexture(manager, "assets/Yellow.png"));
 
-	std::vector<uint32_t> ids(100);
+	std::vector<uint8_t> ids(100);
 	for(std::size_t i = 0; i < ids.size(); ++i)
 	{
 		ids[i] = colors[rand() % colors.size()];

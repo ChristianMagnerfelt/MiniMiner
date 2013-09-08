@@ -31,6 +31,7 @@ namespace MiniMiner
 		void sendKeyUpEvent(InputManager & inputManager, const float x, const float y);
 		bool retrieveSelectedIndex(InputManager & inputManager, uint8_t & index);
 		bool endButtonClicked(InputManager & inputManager);
+		bool endButtonReleased(InputManager & inputManager);
 	};
 };
 
