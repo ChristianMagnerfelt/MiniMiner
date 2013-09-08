@@ -140,8 +140,8 @@ namespace MiniMiner
 		{
 			manager.m_gridContainer = gridContainer;
 			manager.m_gridSize = 64;
-			manager.m_positions.resize(manager.m_gridSize + 3);	// jewels + fire + board
-			manager.m_types.resize(manager.m_gridSize + 3, 0);
+			manager.m_positions.resize(manager.m_gridSize + 2);	// jewels + fire + board
+			manager.m_types.resize(manager.m_gridSize + 2, 0);
 			manager.m_matches.resize(manager.m_gridSize, 0);
 			manager.m_matchCount.resize(8, 0);
 
@@ -170,20 +170,45 @@ namespace MiniMiner
 				}
 			}
 
+			pos.x = 10;
+			pos.y = 10;
+			manager.m_positions[64] = pos;
+			pos.x = 250;
+			pos.y = 530;
+			manager.m_positions[65] = pos;
+			manager.m_types[64] = boardId;
+			manager.m_types[65] = fire1Id;
+
+			manager.m_fireIDs.push_back(fire1Id);
+			manager.m_fireIDs.push_back(fire2Id);
+
+			manager.m_fireTimer = 0.0f;
+			manager.m_fireChangeDuration = 1.0f;
+			manager.m_roundTimer = 65.0f;
 			manager.m_stage = 0;
-			manager.animationSpeed = 70.0f;
-			manager.dropSpeed = 90.0f;
+			manager.m_animationSpeed = 70.0f;
+			manager.m_dropSpeed = 90.0f;
 			return true;
 		}
 		bool update(GameManager & gameManager, InputManager & inputManager, GameTimer & gameTimer)
 		{
+			gameManager::animateFire(gameManager, gameTimer);
+
 			// Check timer and if end button is pressed
-			if(!gameManager::checkConditions(gameManager, inputManager))
+			if(!gameManager::checkConditions(gameManager, inputManager, gameTimer))
 			{
 				// End round
 				gameManager::createBoard(gameManager);
 				return true;
 			}
+
+			// Do some cool board randomizations
+			if(gameManager.m_roundTimer > 60.0f)
+			{
+				gameManager::createBoard(gameManager);
+				return true;
+			}
+
 			// Switch depending on game stage
 			auto stage = gameManager.m_stage;
 			switch (stage)
@@ -198,7 +223,7 @@ namespace MiniMiner
 				case 1:
 					// Move the jewels which are switching place
 					gameManager.m_stage = 1;
-					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.animationSpeed);
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_animationSpeed);
 					gameManager::moveJewel(gameManager, gameTimer);
 
 					// When both jewels have stopped we continue to the next stage
@@ -212,12 +237,12 @@ namespace MiniMiner
 					gameManager::calculateMatchCount(gameManager);
 					gameManager::generateJewels(gameManager);
 					gameManager::updateJewelPositions(gameManager);
-					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.dropSpeed);
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_dropSpeed);
 				case 3:
 					gameManager.m_stage = 3;
 					// Move the jewels until they stop
 					gameManager::moveJewel(gameManager, gameTimer);
-					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.dropSpeed);
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_dropSpeed);
 					if(internal::hasSpeed(gameManager))
 						return true;
 				case 5:
@@ -234,6 +259,17 @@ namespace MiniMiner
 			}
 			return true;
 		}
+		/// Animates the fire
+		void animateFire(GameManager & manager, GameTimer & gameTimer)
+		{
+			manager.m_fireTimer += gameTimer.getSmoothDeltaTime();
+			if(manager.m_fireTimer >= manager.m_fireChangeDuration)
+			{
+				manager.m_fireTimer = 0;
+				manager.m_types[65] = manager.m_fireIDs[0];
+				std::swap(manager.m_fireIDs[0], manager.m_fireIDs[1]);
+			}
+		}
 		/// Creates a random board from a unique set of jewels
 		bool createBoard(GameManager & manager)
 		{
@@ -248,10 +284,12 @@ namespace MiniMiner
 			return true;
 		}
 		/// Checks if condition are meet to end the round
-		bool checkConditions(GameManager & manager, InputManager & inputManager)
+		bool checkConditions(GameManager & manager, InputManager & inputManager, GameTimer & gameTimer)
 		{
-			if(inputManager::endButtonClicked(inputManager))
+			manager.m_roundTimer -= gameTimer.getSmoothDeltaTime();
+			if(inputManager::endButtonClicked(inputManager) || manager.m_roundTimer <= 0)
 			{
+				manager.m_roundTimer = 65;
 				manager.m_stage = 0;
 				return false;
 			}

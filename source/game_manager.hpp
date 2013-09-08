@@ -27,10 +27,14 @@ namespace MiniMiner
 
 		std::vector<uint8_t> m_uniqueTypes;			// The unique types of jewels
 		std::vector<uint8_t> m_matchCount;			// The number of matched sections per row
-		std::vector<uint8_t> m_selectedIdx;			// A vector containg the selected indexes	
-		float animationSpeed;						// The animation speed for every jewel
-		float dropSpeed;							// The speed of jewels that drop from above
+		std::vector<uint8_t> m_selectedIdx;			// A vector containing the selected indexes	
+		std::vector<uint8_t> m_fireIDs;				// A vector containing fire texture ids
+		float m_animationSpeed;						// The animation speed for every jewel
+		float m_dropSpeed;							// The speed of jewels that drop from above
+		float m_fireTimer;							// The fire timer
+		float m_fireChangeDuration;					// How long it should take before the fire changes texture
 
+		float m_roundTimer;							// The timer of the round, when the timer reaches 0 the round ends
 		uint8_t m_stage;							// The current stage of the game
 		float m_roundStart;
 		float m_roundEnd;
@@ -46,8 +50,9 @@ namespace MiniMiner
 			uint8_t fire2ID,
 			uint8_t boardID);
 		bool update(GameManager & gameManager, InputManager & inputManager, GameTimer & gameTimer);
+		void animateFire(GameManager & manager, GameTimer & gameTimer);
 		bool createBoard(GameManager & manager);
-		bool checkConditions(GameManager & manager, InputManager & inputManager);
+		bool checkConditions(GameManager & manager, InputManager & inputManager, GameTimer & gameTimer);
 		bool checkJewelSelection(GameManager & manager, InputManager & inputManager);
 		bool animateJewelSwitch(GameManager & manager, GameTimer & gameTimer);
 		bool checkMatches(GameManager & manager);

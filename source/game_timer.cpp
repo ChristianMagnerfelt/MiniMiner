@@ -26,6 +26,7 @@
 #include "game_timer.hpp"
 
 #include <functional>
+#include <cmath>
 
 GameTimer::GameTimer() : 
 	m_frameStart(),
@@ -37,7 +38,12 @@ GameTimer::GameTimer() :
 	m_frameAcc(),
 	m_getTimeFunc(),
 	m_stallFunc()
-{}
+{
+	for(auto i = 0; i < NUM_SAVED_DELTA_TIMES; ++i)
+	{
+		m_savedDeltaTime[i] = 0;
+	}
+}
 bool GameTimer::init(std::function<seconds_t(void)> getTimeFunc, std::function<void(seconds_t)> stallFunc)
 {
 	m_getTimeFunc = getTimeFunc;

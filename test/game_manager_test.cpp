@@ -30,8 +30,8 @@ void testInit()
 	setup(gameManager, gridContainer, types, numTypes);
 
 	assert(MiniMiner::gameManager::init(gameManager, gridContainer, types.data(), numTypes, 1, 1, 1));
-	assert(gameManager.m_positions.size() == 67);
-	assert(gameManager.m_types.size() == 67);
+	assert(gameManager.m_positions.size() == 66);
+	assert(gameManager.m_types.size() == 66);
 	assert(gameManager.m_startPositions.size() == 64);
 	assert(gameManager.m_speed.size() == 64);
 	assert(gameManager.m_matchCount.size() == 8);
