@@ -3,6 +3,10 @@
 ///
 #include "game_manager.hpp"
 
+#include <cmath>
+
+#define copysign _copysign
+
 namespace MiniMiner
 {
 	namespace gameManager
@@ -186,9 +190,53 @@ namespace MiniMiner
 
 			return true;
 		}
-		bool moveJewels(GameManager & manager, GameTimer & gameTimer)
+		void setJewelSpeed(GameManager & manager, GameTimer & gameTimer, float speed)
 		{
+			auto & positions = manager.m_positions;
+			auto & startPositions = manager.m_startPositions;
+			auto & jewelSpeed = manager.m_speed;
+			uint32_t size = positions.size();
+			float deltaTime = gameTimer.getSmoothDeltaTime();
+			float deltaSpeed = speed * deltaTime;
+			float deltaDistance = 0.0f;
+			for(uint32_t i = 0; i < size; ++i)
+			{
+				deltaDistance = startPositions[i].x - positions[i].x;
+				if(deltaDistance < deltaSpeed)
+				{
+					jewelSpeed[i].x = 0;
+					positions[i].x = startPositions[i].x;
+				}
+				else
+				{
+					// Set speed so that the jewel move towards the start position
+					jewelSpeed[i].x = copysign(speed, deltaDistance);
+				}
 
+				deltaDistance = startPositions[i].y - positions[i].y;
+				if(deltaDistance < deltaSpeed)
+				{
+					jewelSpeed[i].y = 0;
+					positions[i].y = startPositions[i].y;
+				}
+				else
+				{
+					// Set speed so that the jewel move towards the start position
+					jewelSpeed[i].y = copysign(speed, deltaDistance);
+				}
+			}
+		}
+		bool moveJewel(GameManager & manager, GameTimer & gameTimer)
+		{
+			auto & positions = manager.m_positions;
+			auto & speed = manager.m_speed;
+			uint32_t size = positions.size();
+			float deltaTime = gameTimer.getSmoothDeltaTime();
+			for(uint32_t i = 0; i < size; ++i)
+			{
+				positions[i].x += speed[i].x * deltaTime;
+				positions[i].y += speed[i].y * deltaTime;			
+			}
 			return true;
 		}
 	};
