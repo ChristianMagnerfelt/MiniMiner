@@ -42,6 +42,9 @@ namespace MiniMiner
 		std::vector<Vec2> m_textScale;				// Text scale
 		std::vector<char> m_textBuffer;				// A buffer that stores text
 		std::vector<char*> m_texts;					// A vector string pointers
+		bool m_doubleSwitch;						// Jewel switch animation flag
+		bool m_switched;
+		bool m_switchedBack;
 	};
 	namespace gameManager
 	{

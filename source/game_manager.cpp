@@ -207,6 +207,9 @@ namespace MiniMiner
 			scale.y = 1;
 			manager.m_textScale.push_back(scale);
 			manager.m_textScale.push_back(scale);
+			manager.m_doubleSwitch = false;
+			manager.m_switched = false;
+			manager.m_switchedBack = false;
 			return true;
 		}
 		bool update(GameManager & gameManager, InputManager & inputManager, GameTimer & gameTimer)
@@ -238,17 +241,12 @@ namespace MiniMiner
 						// We do not have a selection yet
 						return true;
 					}
-					gameManager::animateJewelSwitch(gameManager, gameTimer);
+					
 				case 1:
-					// Move the jewels which are switching place
 					gameManager.m_stage = 1;
-					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_animationSpeed);
-					gameManager::moveJewel(gameManager, gameTimer);
-
-					// When both jewels have stopped we continue to the next stage
-					if(internal::hasSpeed(gameManager))
+					if(!gameManager::animateJewelSwitch(gameManager, gameTimer))
 					{
-						// Jewels are still moving
+						// Animation is not ready, or switch was not successfull
 						return true;
 					}
 				case 2:
@@ -368,27 +366,91 @@ namespace MiniMiner
 				if(internal::hasMatches(manager))
 				{
 					// We have a match, continue to the next stage
+					manager.m_doubleSwitch = false;
 					return true;
 				}
 				else
 				{
 					// We do not have a successful switch, switch back
-					manager.m_selectedIdx.clear();
-					std::swap(types[first], types[second]);
-					manager.m_stage = 0;
-					return false;
+					manager.m_doubleSwitch = true;
+					return true;
 				}
 			}
 			return false;
 		}
 		/// Animates the switch between two jewels
-		bool animateJewelSwitch(GameManager & manager, GameTimer & gameTimer)
+		bool animateJewelSwitch(GameManager & gameManager, GameTimer & gameTimer)
 		{
-			auto & positions = manager.m_positions;
-			auto & selectedIdx = manager.m_selectedIdx;
-			std::swap(positions[selectedIdx[0]], positions[selectedIdx[1]]);
-			manager.m_selectedIdx.clear();
-			return true;
+			bool doubleSwitch;
+			auto & positions = gameManager.m_positions;
+			auto & selectedIdx = gameManager.m_selectedIdx;
+			auto & types = gameManager.m_types;
+
+			if(gameManager.m_doubleSwitch)
+			{
+					if(!gameManager.m_switched)
+					{
+						std::swap(positions[selectedIdx[0]], positions[selectedIdx[1]]);
+						gameManager.m_switched = true;
+					}
+					if(!gameManager.m_switchedBack)
+					{
+						// Move the jewels which are switching place
+						gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_animationSpeed);
+						gameManager::moveJewel(gameManager, gameTimer);
+
+						// When both jewels have stopped we continue to the next stage
+						if(internal::hasSpeed(gameManager))
+						{
+							// Jewels are still moving
+							return false;
+						}				
+						std::swap(types[selectedIdx[0]], types[selectedIdx[1]]);
+						std::swap(positions[selectedIdx[0]], positions[selectedIdx[1]]);
+						gameManager.m_switchedBack = true;
+					}
+
+					// Move the jewels which are switching place
+					gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_animationSpeed);
+					gameManager::moveJewel(gameManager, gameTimer);
+
+					// When both jewels have stopped we continue to the next stage
+					if(internal::hasSpeed(gameManager))
+					{
+						// Jewels are still moving
+						return false;
+					}	
+					
+					gameManager.m_selectedIdx.clear();
+					gameManager.m_doubleSwitch = false;
+					gameManager.m_switched = false;
+					gameManager.m_switchedBack = false;
+					gameManager.m_stage = 0;
+					return false;
+			}
+			else
+			{
+				if(!gameManager.m_switched)
+				{
+					std::swap(positions[selectedIdx[0]], positions[selectedIdx[1]]);
+					gameManager.m_switched = true;
+				}
+
+				// Move the jewels which are switching place
+				gameManager::setJewelSpeed(gameManager, gameTimer, gameManager.m_animationSpeed);
+				gameManager::moveJewel(gameManager, gameTimer);
+
+				// When both jewels have stopped we continue to the next stage
+				if(internal::hasSpeed(gameManager))
+				{
+					// Jewels are still moving
+					return false;
+				}
+				gameManager.m_selectedIdx.clear();
+				gameManager.m_switched = false;
+				return true;
+			}
+			return false;
 		}
 		/// Checks if we have a horizontal and/or a vertical 3+ match and store them in a matrix
 		bool checkMatches(GameManager & manager)
