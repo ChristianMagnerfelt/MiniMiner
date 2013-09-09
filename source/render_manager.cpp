@@ -81,7 +81,13 @@ namespace MiniMiner {
 			bool createGlyphsTexture(TTF_Font * font, uint32_t & textureID)
 			{
 				// Write text to surface
-				SDL_Surface* temp = SDL_CreateRGBSurface(0, 320, 320, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+				uint32_t rMask;
+				uint32_t gMask;
+				uint32_t bMask;
+				uint32_t aMask;
+				int bpp = 8;
+				SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_ARGB8888, &bpp, &rMask, &gMask, &bMask, &aMask); 
+				SDL_Surface* temp = SDL_CreateRGBSurface(0, 320, 320, 32, rMask, gMask, bMask, aMask);
 				SDL_SetSurfaceBlendMode(temp, SDL_BLENDMODE_BLEND);
 				if(temp == nullptr)
 				{
@@ -90,7 +96,12 @@ namespace MiniMiner {
 				}
 				SDL_Surface * glyphs[93];
 
-				SDL_Color textColor = {255, 255, 255, 255};		//Default color is white
+				SDL_Color textColor;
+				textColor.r = 0;
+				textColor.g = 0;
+				textColor.b = 255;
+				textColor.a = 255;
+
 				SDL_Rect src;
 				SDL_Rect dst;
 
@@ -143,21 +154,37 @@ namespace MiniMiner {
 					SDL_FreeSurface(glyphs[i]);
 				}
 
+				SDL_LockSurface(temp);
+				// Copy pixels to temporary buffer in RGBA order
+				uint8_t * buffer = new uint8_t[temp->w * temp->h * 4];
+				uint32_t * pixels = reinterpret_cast<uint32_t*>(temp->pixels);
+				uint32_t numPixels = temp->w * temp->h;
+				uint32_t pixel = 0;
+				uint32_t component = 0;
+				for(uint32_t i = 0; i < numPixels; ++i)
+				{
+					pixel = pixels[i];
+					buffer[component] = (pixel & 0x00FF0000) >> 16;
+					buffer[component + 1] = (pixel & 0x0000FF00) >> 8;
+					buffer[component + 2] = (pixel & 0x000000FF);
+					buffer[component + 3] = (buffer[component + 2] && 1) * 255;
+					component += 4;
+				}
+				
+				std::vector<uint8_t> copy(buffer, buffer + (temp->w * temp->h) * 4);
+				std::vector<uint8_t> tmp((uint8_t *)pixels, (uint8_t *)pixels + (temp->w * temp->h) * 4);
 				// Generate a OpenGL texture from sdl surface
 				glGenTextures(1, &textureID);
 				glBindTexture(GL_TEXTURE_2D, textureID);
- 
-				int Mode = GL_RGB;
-				if(temp->format->BytesPerPixel == 4) {
-					Mode = GL_RGBA;
-				}
 	
 				auto texWidth = temp->w;
 				auto texHeight = temp->h;
-				glTexImage2D(GL_TEXTURE_2D, 0, Mode, texWidth, texHeight, 0, Mode, GL_UNSIGNED_BYTE, temp->pixels);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+				delete [] buffer;
+				SDL_UnlockSurface(temp);
 				SDL_FreeSurface(temp);
 				return true;
 			}
@@ -356,7 +383,7 @@ namespace MiniMiner {
 			
 
 			// Render texts
-			glBlendFunc(GL_ONE, GL_ZERO);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glBindTexture(GL_TEXTURE_2D, manager.m_textAtlas);
 
 			internal::renderTexts(manager);

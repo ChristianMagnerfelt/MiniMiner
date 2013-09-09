@@ -546,7 +546,7 @@ namespace MiniMiner
 			int32_t offset = 0;
 			texts.clear();
 			texts.push_back(buffer + offset);
-			offset += snprintf(buffer + offset, size - offset, "Score : %d", manager.m_score);
+			offset += snprintf(buffer + offset, size - offset, "%d", manager.m_score);
 			buffer[offset++] = '\0';
 			texts.push_back(buffer + offset);
 			offset += snprintf(buffer + offset, size - offset, "Timer : %.f", manager.m_roundTimer);

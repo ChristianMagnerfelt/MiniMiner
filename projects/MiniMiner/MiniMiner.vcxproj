@@ -49,7 +49,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\game\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\temp\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_ttf;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_image;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl2.0.0_ttf;C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\include\sdl_gfx;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\CrizMobius\Documents\Visual Studio 2012\Projects\MiniMiner\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
