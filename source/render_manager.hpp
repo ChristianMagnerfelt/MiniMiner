@@ -34,7 +34,7 @@ namespace MiniMiner
 		bool copyToBuffer(RenderManager & manager, uint8_t * IDs, Vec2 * positions, std::size_t count);
 		bool setBackground(RenderManager & manager, uint32_t bgID, Vec2 position);
 		bool renderDrawables(RenderManager & manager);
-		bool copyTextsToBuffer(RenderManager & manager, char ** text, Vec2 * position, Vec2 * scale, uint32_t count);  
+		bool copyTextsToBuffer(RenderManager & manager, char ** text, Vec2 * position, Vec2 * scale, uint32_t count); 
 	};
 };
 

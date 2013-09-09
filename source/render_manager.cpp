@@ -66,12 +66,12 @@ namespace MiniMiner {
 
 						// Draw the glyph
 						glBegin(GL_QUADS);
-						glTexCoord2f(x, y); glVertex3f(posX, posY, 0);
+						glTexCoord2f(x, y + 0.02f); glVertex3f(posX, posY, 0);
 						glTexCoord2f(x, y + 0.1f); glVertex3f(posX, posY + 32, 0);
 						glTexCoord2f(x + 0.1f, y + 0.1f); glVertex3f(posX + 32, posY + 32, 0);
 						glTexCoord2f(x + 0.1f, y); glVertex3f(posX + 32, posY, 0);
 						glEnd();
-						posX += 32;
+						posX += 25;
 					}
 				}
 
@@ -81,7 +81,8 @@ namespace MiniMiner {
 			bool createGlyphsTexture(TTF_Font * font, uint32_t & textureID)
 			{
 				// Write text to surface
-				SDL_Surface* temp = SDL_CreateRGBSurface(0, 320, 320, 32, 0, 0, 0, 0);
+				SDL_Surface* temp = SDL_CreateRGBSurface(0, 320, 320, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+				SDL_SetSurfaceBlendMode(temp, SDL_BLENDMODE_BLEND);
 				if(temp == nullptr)
 				{
 					LOGGER_ERROR("Could not create RGBSurface");
@@ -355,7 +356,7 @@ namespace MiniMiner {
 			
 
 			// Render texts
-			glBlendFunc(GL_ONE, GL_ONE);
+			glBlendFunc(GL_ONE, GL_ZERO);
 			glBindTexture(GL_TEXTURE_2D, manager.m_textAtlas);
 
 			internal::renderTexts(manager);

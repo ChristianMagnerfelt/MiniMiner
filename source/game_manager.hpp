@@ -34,10 +34,14 @@ namespace MiniMiner
 		float m_fireTimer;							// The fire timer
 		float m_fireChangeDuration;					// How long it should take before the fire changes texture
 
+		int32_t m_score;							// The player score
 		float m_roundTimer;							// The timer of the round, when the timer reaches 0 the round ends
 		uint8_t m_stage;							// The current stage of the game
-		float m_roundStart;
-		float m_roundEnd;
+
+		std::vector<Vec2> m_textPos;				// Text positions
+		std::vector<Vec2> m_textScale;				// Text scale
+		std::vector<char> m_textBuffer;				// A buffer that stores text
+		std::vector<char*> m_texts;					// A vector string pointers
 	};
 	namespace gameManager
 	{
@@ -61,6 +65,7 @@ namespace MiniMiner
 		bool updateJewelPositions(GameManager & manager);
 		void setJewelSpeed(GameManager & manager, GameTimer & gameTimer, float speed);
 		bool moveJewel(GameManager & manager, GameTimer & gameTimer);
+		void writeTextToBuffer(GameManager & manager);
 	};
 };
 

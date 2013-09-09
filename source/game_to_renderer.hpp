@@ -14,6 +14,7 @@ namespace MiniMiner
 	namespace gameToRenderer
 	{
 		void jewelsToDrawables(GameManager & gameManager, RenderManager & renderManager);
+		void textsToTextDrawables(GameManager & gameManager, RenderManager & renderManager);
 	};
 }
 #endif

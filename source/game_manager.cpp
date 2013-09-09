@@ -5,7 +5,10 @@
 
 #include <cmath>
 
+#ifdef _WIN32
 #define copysign _copysign
+#define snprintf _snprintf
+#endif
 
 namespace MiniMiner
 {
@@ -185,9 +188,25 @@ namespace MiniMiner
 			manager.m_fireTimer = 0.0f;
 			manager.m_fireChangeDuration = 1.0f;
 			manager.m_roundTimer = 65.0f;
+			manager.m_score = 0;
 			manager.m_stage = 0;
 			manager.m_animationSpeed = 70.0f;
 			manager.m_dropSpeed = 90.0f;
+
+			manager.m_texts.resize(10, 0);
+			manager.m_textBuffer.resize(512, 0);
+
+			pos.x = 100;
+			pos.y = 100;
+			manager.m_textPos.push_back(pos);
+			pos.x = 100;
+			pos.y = 200;
+			manager.m_textPos.push_back(pos);
+			Vec2 scale;
+			scale.x = 1;
+			scale.y = 1;
+			manager.m_textScale.push_back(scale);
+			manager.m_textScale.push_back(scale);
 			return true;
 		}
 		bool update(GameManager & gameManager, InputManager & inputManager, GameTimer & gameTimer)
@@ -518,6 +537,20 @@ namespace MiniMiner
 				positions[i].y += speed[i].y * deltaTime;			
 			}
 			return true;
+		}
+		void writeTextToBuffer(GameManager & manager)
+		{
+			auto buffer = manager.m_textBuffer.data();
+			auto & texts = manager.m_texts;
+			int32_t size =  manager.m_textBuffer.size();
+			int32_t offset = 0;
+			texts.clear();
+			texts.push_back(buffer + offset);
+			offset += snprintf(buffer + offset, size - offset, "Score : %d", manager.m_score);
+			buffer[offset++] = '\0';
+			texts.push_back(buffer + offset);
+			offset += snprintf(buffer + offset, size - offset, "Timer : %.f", manager.m_roundTimer);
+			buffer[offset++] = '\0';
 		}
 	};
 };

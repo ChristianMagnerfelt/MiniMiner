@@ -135,6 +135,8 @@ int main( int argc, char* argv[] )
 			}
 		}
 		MiniMiner::gameManager::update(gameManager, inputManager, gameTimer);
+		MiniMiner::gameManager::writeTextToBuffer(gameManager);
+		MiniMiner::gameToRenderer::textsToTextDrawables(gameManager, renderManager);
 		MiniMiner::gameToRenderer::jewelsToDrawables(gameManager, renderManager);
 		render(window, renderManager);
 	}
